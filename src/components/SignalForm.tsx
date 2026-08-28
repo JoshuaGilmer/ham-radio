@@ -4,8 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CATS, ORGS, STORAGE_LABEL, orgById, type StorageKind } from "@/data";
-import { computeMatches, fmtHour, type SignalForm as SignalFormValues } from "@/engine";
+import { CATS, ORGS, STORAGE_LABEL, type Org, type StorageKind } from "@/data";
+import { computeMatches, effectiveOrg, fmtHour, type SignalForm as SignalFormValues } from "@/engine";
 
 const HOURS = Array.from({ length: 14 }, (_, i) => i + 7); // 7 AM – 8 PM
 const NETWORK_SIZE = ORGS.length - 1; // everyone but the poster
@@ -39,11 +39,13 @@ const URGENCY: Record<string, { label: string; cls: string }> = {
 export function SignalForm({
   orgName,
   personaId,
+  profileOverrides,
   onSubmit,
   onCancel,
 }: {
   orgName: string;
   personaId: string;
+  profileOverrides: Record<string, Partial<Org>>;
   onSubmit: (v: SignalFormValues) => void;
   onCancel: () => void;
 }) {
@@ -72,7 +74,9 @@ export function SignalForm({
 
   const preview = useMemo(() => {
     if (windowError) return null;
-    const matches = computeMatches({ posterId: personaId, category, storageReq, pickupStart, pickupEnd });
+    // Mirror postSignal exactly: same engine call, same overrides — the preview
+    // must never disagree with the fan-out that actually happens on send.
+    const matches = computeMatches({ posterId: personaId, category, storageReq, pickupStart, pickupEnd }, { profileOverrides });
     const hits = matches.filter((m) => m.ok);
     const counts = new Map<string, number>();
     for (const m of matches) {
@@ -81,10 +85,10 @@ export function SignalForm({
     }
     return {
       n: hits.length,
-      names: hits.map((m) => orgById(m.orgId).name),
+      names: hits.map((m) => effectiveOrg(m.orgId, { profileOverrides }).name),
       excluded: [...counts.entries()].sort((a, b) => b[1] - a[1]),
     };
-  }, [personaId, category, storageReq, pickupStart, pickupEnd, windowError]);
+  }, [personaId, profileOverrides, category, storageReq, pickupStart, pickupEnd, windowError]);
 
   const urgency = URGENCY[expiresHrs];
 
