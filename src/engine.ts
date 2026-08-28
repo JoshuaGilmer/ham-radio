@@ -220,6 +220,43 @@ export function confirmSignal(s: AppState, id: number): AppState {
   return { ...s, signals };
 }
 
+/* ---------- demo scenarios: seeded mid-story so the demo is never hand-assembled live ---------- */
+
+export type ScenarioName = "happy" | "noTakers";
+
+export function loadScenario(name: ScenarioName): AppState {
+  if (name === "happy") {
+    // Ray posted the default dairy signal at 9:14 AM; the presenter lands as
+    // Mock Creek with the signal on their board, one tap from claiming.
+    const posted = postSignal(
+      { ...freshState(), clock: 9 * 60 + 14 },
+      {
+        category: "dairy",
+        qty: "120",
+        storageReq: "cold",
+        expiresHrs: "72",
+        pickupStart: 13,
+        pickupEnd: 18,
+        nextDist: "Wed (can't absorb)",
+      }
+    );
+    return { ...posted, persona: "mock" };
+  }
+  // No takers: Ray's prepared-food signal has sat unclaimed all day. The clock
+  // lands at 5:50 PM — one +15m click past the 6 PM window close, straight into
+  // the escalation screen.
+  const posted = postSignal(freshState(), {
+    category: "prepared",
+    qty: "60",
+    storageReq: "cold",
+    expiresHrs: "8",
+    pickupStart: 13,
+    pickupEnd: 18,
+    nextDist: "None today",
+  });
+  return advanceClock(posted, 8 * 60 + 50);
+}
+
 export function pickupSignal(s: AppState, id: number): AppState {
   const signals = s.signals.map((f) =>
     f.id === id && f.status === "confirmed"

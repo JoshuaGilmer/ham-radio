@@ -17,6 +17,7 @@ import {
   type SignalForm as SignalFormValues,
 } from "@/engine";
 import { ClaimDialog } from "@/components/ClaimDialog";
+import { DemoControls } from "@/components/DemoControls";
 import { CommsPanel } from "@/comms/CommsPanel";
 import { NetworkTab } from "@/components/NetworkTab";
 import { SignalForm } from "@/components/SignalForm";
@@ -64,6 +65,7 @@ export default function App() {
           <Button variant="outline" size="sm" className="h-7 px-2 font-mono text-[11px]" onClick={() => setState((s) => advanceClock(s, 60))}>
             +1h
           </Button>
+          <DemoControls onLoad={setState} />
         </div>
         <div className="grow" />
         <span className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">Viewing as</span>
