@@ -17,6 +17,7 @@ import {
   type SignalForm as SignalFormValues,
 } from "@/engine";
 import { ClaimDialog } from "@/components/ClaimDialog";
+import { CommsPanel } from "@/comms/CommsPanel";
 import { NetworkTab } from "@/components/NetworkTab";
 import { SignalForm } from "@/components/SignalForm";
 import { SignalTicket } from "@/components/SignalTicket";
@@ -161,6 +162,8 @@ export default function App() {
           </TabsContent>
         </Tabs>
       </main>
+
+      <CommsPanel signals={state.signals} />
 
       <footer className="mx-auto max-w-5xl px-5 pb-12 text-xs text-muted-foreground">
         <p>
