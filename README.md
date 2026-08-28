@@ -4,6 +4,21 @@ Every pantry a station: broadcast expiring surplus **sideways** across B'ham's p
 
 Built at the [Claude Impact Lab](https://github.com/Birmingham-AI/claude-impact-lab) (Birmingham AI), food coordination track. The name is the mechanic — a distress broadcast over a network of stations — plus the obvious B'ham pun.
 
+**▶ [Try the live demo](https://joshuagilmer.github.io/ham-radio/)** · **[The one-page case for judges](docs/judges.html)**
+
+![The Ham Radio board mid-demo: Ray's 120 lbs of dairy posted against a 72-hour clock, matched to 5 of 11 orgs, one tap from a claim.](docs/board.png)
+
+## Run the demo in 60 seconds
+
+No setup, no hand-assembling state — the two **Scenario** buttons in the header seed everything.
+
+1. Open the [live demo](https://joshuagilmer.github.io/ham-radio/), or `yarn dev` locally.
+2. **Happy path —** click **Scenario A**. Ray's dairy signal is already posted and you're viewing as Mock Creek, one tap from claiming. Claim it → switch persona back to Fauxfield → confirm → mark picked up.
+3. **Failure path —** click **Scenario B**, then **+15m**. The unclaimed signal escalates to the CFBCA desk with verified 211 links. A dead signal is loud, never silent.
+4. **Reset demo** clears state between run-throughs.
+
+Say it out loud once: *every number on this screen is invented.*
+
 ## Team
 
 - **Team name:** Ham Radio
@@ -88,5 +103,6 @@ Take the working demo to the **Community Food Bank of Central Alabama's agency-r
 
 ## Docs
 
+- [`docs/judges.html`](docs/judges.html) — the one-page case for judges: the person and the decision moment, rubric fit, guardrail compliance, and the two questions we expect. Prints cleanly as a handout.
 - [`docs/prd.html`](docs/prd.html) — the red-teamed PRD: persona, rubric fit, counterparty attacks and resolutions, build plan.
 - [`docs/prototype.html`](docs/prototype.html) — the original single-file vanilla prototype, kept for reference.
