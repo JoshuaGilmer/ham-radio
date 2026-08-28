@@ -17,8 +17,10 @@ A single Vercel serverless function that holds the Photon project secret and sen
    - `PHOTON_PROJECT_SECRET` — from step 1
    - `DEMO_TOKEN` — any random string; this is what gets pasted into the demo panel
    - `ALLOW_ORIGIN` — `https://joshuagilmer.github.io` (CORS lockdown; `*` while testing)
-4. **Verify the SDK calls:** the two `VERIFY(josh)` comments in `api/send.ts` mark the provider import and the send signature — written from Photon's public examples, unverified until run with real credentials. Adjust against https://photon.codes/docs if the first test errors.
-5. **Demo:** in the app's Presenter tools panel choose **Photon**, paste the relay URL (`https://<deployment>.vercel.app/api/send`) and the `DEMO_TOKEN`, enter the judge's number, consent box, send.
+4. **Add the judge as a project user.** Free-plan shared lines only send to numbers registered as project users — dashboard → ham-radio → Add users. Without this, sends fail with "Target not allowed for this project". (The verified send path is `im.space.create(await im.user(to))` → `space.send(body)`, spectrum-ts 12.8.0 — already wired in `api/send.ts`.)
+5. **Demo:** in the app's Presenter tools panel choose **Photon**, paste the relay URL (`https://<deployment>.vercel.app/api/send`) and the `DEMO_TOKEN`, enter the judge's number, consent box, send. Note: recipients get the message from a shared-pool number, as iMessage where possible with SMS/RCS fallback.
+
+A scaffolded Spectrum project also lives OUTSIDE this repo at `~/Sites/photon/ham-radio` (its `.env` holds the credentials — never commit it). Useful there: `npm start` runs the echo agent; `npm run send-test -- +1XXXXXXXXXX` fires a one-shot outbound demo message, which is the fastest way to sanity-check credentials and the allowlist.
 
 ## Guardrails baked in
 

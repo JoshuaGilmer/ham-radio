@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "dependencies": {
-    "spectrum-ts": "latest"
+    "@spectrum-ts/imessage": "^12.8.0",
+    "spectrum-ts": "^12.8.0"
   },
   "devDependencies": {
     "@vercel/node": "^5.0.0"
