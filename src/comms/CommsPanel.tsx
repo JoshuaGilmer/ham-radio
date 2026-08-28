@@ -16,12 +16,49 @@ import type { OutboxEntry } from "./types";
  * Opt-in by construction — a human picks the signal, supplies the number,
  * attests consent, and presses send. Nothing is automatic.
  */
+const DEFAULT_RELAY = "https://ham-radio-relay.vercel.app/api/send";
+const PREFS_KEY = "hamradio-comms-prefs-v1";
+
+// Presenter convenience: provider/phone/relay persist per-browser so the demo
+// opens prefilled after a rehearsal. The token is deliberately NOT persisted —
+// it stays in memory only and is re-pasted each session.
+function loadPrefs(): { providerId: string; phone: string; endpoint: string } {
+  try {
+    const raw = localStorage.getItem(PREFS_KEY);
+    if (raw) return { providerId: "simulated", phone: "", endpoint: DEFAULT_RELAY, ...JSON.parse(raw) };
+  } catch {
+    /* storage unavailable */
+  }
+  return { providerId: "simulated", phone: "", endpoint: DEFAULT_RELAY };
+}
+
 export function CommsPanel({ signals }: { signals: Signal[] }) {
+  const prefs = loadPrefs();
   const [open, setOpen] = useState(false);
-  const [providerId, setProviderId] = useState("simulated");
-  const [phone, setPhone] = useState("");
+  const [providerId, setProviderIdRaw] = useState(prefs.providerId);
+  const [phone, setPhoneRaw] = useState(prefs.phone);
   const [key, setKey] = useState(""); // memory only — never persisted
-  const [endpoint, setEndpoint] = useState(""); // relay URL for server-side-secret providers
+  const [endpoint, setEndpointRaw] = useState(prefs.endpoint); // relay URL for server-side-secret providers
+
+  const savePrefs = (next: Partial<{ providerId: string; phone: string; endpoint: string }>) => {
+    try {
+      localStorage.setItem(PREFS_KEY, JSON.stringify({ providerId, phone, endpoint, ...next }));
+    } catch {
+      /* storage unavailable */
+    }
+  };
+  const setProviderId = (v: string) => {
+    setProviderIdRaw(v);
+    savePrefs({ providerId: v });
+  };
+  const setPhone = (v: string) => {
+    setPhoneRaw(v);
+    savePrefs({ phone: v });
+  };
+  const setEndpoint = (v: string) => {
+    setEndpointRaw(v);
+    savePrefs({ endpoint: v });
+  };
   const [consent, setConsent] = useState(false);
   const [signalId, setSignalId] = useState<string>("latest");
   const [sending, setSending] = useState(false);
