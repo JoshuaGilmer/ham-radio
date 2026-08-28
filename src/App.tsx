@@ -172,6 +172,8 @@ export default function App() {
           Ham Radio · Claude Impact Lab, Birmingham AI. Org-to-org only — no client data. Humans confirm both ends of every transfer; the
           filter gates physical compatibility only and never scores need.
         </p>
+        {/* TODO(josh): Pages publishes only dist/ — add `cp docs/judges.html dist/` before upload-pages-artifact or this 404s in production. */}
+        <p className="mt-1.5"><a className="text-freeze underline" href="./judges.html" target="_blank" rel="noopener noreferrer">For judges — the one-page case ↗</a></p>
         <p className="mt-1.5">
           Verified links (real):{" "}
           <a className="text-freeze underline" href="https://www.211connectsalabama.org" target="_blank" rel="noopener noreferrer">
