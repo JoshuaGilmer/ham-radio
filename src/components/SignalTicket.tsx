@@ -7,6 +7,32 @@ import { HOLD_MIN, ORGS, STORAGE_LABEL, orgById } from "@/data";
 import { fmtClock, fmtHour, type Signal } from "@/engine";
 import { StatusRail } from "./StatusRail";
 
+/** Hold-countdown urgency: ok above 15 demo-minutes, warn at 15 and under, crit at 5 and under. */
+export function holdTone(minsLeft: number): "ok" | "warn" | "crit" {
+  if (minsLeft <= 5) return "crit";
+  if (minsLeft <= 15) return "warn";
+  return "ok";
+}
+
+const holdToneClass: Record<ReturnType<typeof holdTone>, string> = {
+  ok: "border-ok bg-ok-soft text-ok",
+  warn: "border-warn bg-warn-soft text-warn",
+  crit: "border-crit bg-crit-soft text-crit motion-safe:animate-pulse",
+};
+
+function HoldChip({ minsLeft }: { minsLeft: number }) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded border px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wider tabular-nums",
+        holdToneClass[holdTone(minsLeft)]
+      )}
+    >
+      HOLD · {minsLeft} MIN
+    </span>
+  );
+}
+
 function Field({ label, value, tone }: { label: string; value: React.ReactNode; tone?: "hot" | "cold" }) {
   return (
     <div className="min-w-0">
@@ -122,8 +148,12 @@ export function SignalTicket({
       {signal.status === "claimed" && claimer && mine && (
         <>
           <div className="flex flex-wrap items-center gap-3 border-t border-dashed px-4 py-2.5 text-sm">
-            <span>
-              <b>{claimer.name}</b> claimed · hold expires in <b>{holdLeft} min</b> (demo clock)
+            <span className="flex flex-wrap items-center gap-2">
+              <span>
+                <b>{claimer.name}</b> claimed ·
+              </span>
+              <HoldChip minsLeft={holdLeft} />
+              <span className="text-xs text-muted-foreground">(demo clock)</span>
             </span>
             <Button size="sm" onClick={() => onConfirm(signal.id)}>
               Confirm transfer
@@ -139,8 +169,11 @@ export function SignalTicket({
       )}
 
       {signal.status === "claimed" && iAmClaimer && (
-        <div className="border-t border-dashed px-4 py-2.5 text-sm">
-          You claimed this. Waiting on <b>{poster.name}</b> to confirm · hold expires in <b>{holdLeft} min</b>.
+        <div className="flex flex-wrap items-center gap-2 border-t border-dashed px-4 py-2.5 text-sm">
+          <span>
+            You claimed this. Waiting on <b>{poster.name}</b> to confirm ·
+          </span>
+          <HoldChip minsLeft={holdLeft} />
         </div>
       )}
 
@@ -163,30 +196,50 @@ export function SignalTicket({
       )}
 
       {signal.status === "escalated" && (
-        <div className="border-t border-crit bg-crit-soft px-4 py-3 text-sm">
-          <b className="text-crit">Nobody could take this in time.</b> A dead signal is loud, never silent — it goes to a human desk with
-          verified links:
-          <ul className="mt-1.5 list-disc pl-5">
+        <div className="border-t border-crit bg-crit-soft px-4 py-3.5 text-sm">
+          <div className="mb-1 font-mono text-[10px] font-semibold tracking-widest text-crit uppercase">
+            Escalated · routed to a human desk
+          </div>
+          <p>
+            <b className="font-display text-base text-crit">Nobody could take this in time.</b> A dead signal is loud, never silent — it
+            goes to a human desk with verified links:
+          </p>
+          <ul className="mt-2.5 grid gap-1.5 sm:grid-cols-3">
             <li>
-              CFBCA agency-relations desk —{" "}
-              <a className="text-freeze underline" href="https://feedingal.org" target="_blank" rel="noopener noreferrer">
-                feedingal.org
-              </a>{" "}
-              (verified)
+              <a
+                className="flex h-full flex-col rounded border bg-card px-3 py-2 hover:border-crit"
+                href="https://feedingal.org"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="font-bold">CFBCA agency-relations desk</span>
+                <span className="font-mono text-xs text-freeze underline">feedingal.org</span>
+                <span className="mt-1 font-mono text-[9px] font-semibold tracking-widest text-ok uppercase">Verified</span>
+              </a>
             </li>
             <li>
-              Dial 211 or{" "}
-              <a className="text-freeze underline" href="https://www.211connectsalabama.org" target="_blank" rel="noopener noreferrer">
-                211connectsalabama.org
-              </a>{" "}
-              (verified)
+              <a
+                className="flex h-full flex-col rounded border bg-card px-3 py-2 hover:border-crit"
+                href="https://www.211connectsalabama.org"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="font-bold">Dial 211</span>
+                <span className="font-mono text-xs text-freeze underline">211connectsalabama.org</span>
+                <span className="mt-1 font-mono text-[9px] font-semibold tracking-widest text-ok uppercase">Verified</span>
+              </a>
             </li>
             <li>
-              Volunteer drivers —{" "}
-              <a className="text-freeze underline" href="https://gracekleincommunity.com" target="_blank" rel="noopener noreferrer">
-                Grace Klein / FeedBHM
-              </a>{" "}
-              (verified)
+              <a
+                className="flex h-full flex-col rounded border bg-card px-3 py-2 hover:border-crit"
+                href="https://gracekleincommunity.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="font-bold">Volunteer drivers — Grace Klein / FeedBHM</span>
+                <span className="font-mono text-xs text-freeze underline">gracekleincommunity.com</span>
+                <span className="mt-1 font-mono text-[9px] font-semibold tracking-widest text-ok uppercase">Verified</span>
+              </a>
             </li>
           </ul>
         </div>
