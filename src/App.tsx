@@ -186,6 +186,7 @@ export default function App() {
       {claimingId !== null && (
         <ClaimDialog
           org={me}
+          signal={state.signals.find((f) => f.id === claimingId)}
           open
           onCancel={() => setClaimingId(null)}
           onClaim={(transport) => {
