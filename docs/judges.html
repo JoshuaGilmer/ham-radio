@@ -7,10 +7,12 @@
 <style>
   :root{
     --paper:#F4F6F7; --panel:#FFFFFF; --panel-2:#EAEEF0;
-    --ink:#15222B; --ink-soft:#44555F; --ink-faint:#6E7E87; --line:#D4DBDF;
+    /* light-theme values darkened to clear WCAG AA on the surfaces they render
+       on — matches the same a11y fix in src/index.css. Dark theme already passes. */
+    --ink:#15222B; --ink-soft:#44555F; --ink-faint:#606E75; --line:#D4DBDF;
     --flare:#E85D0F; --flare-soft:#FBE9DD;
-    --freeze:#2E7EA1; --freeze-soft:#E1EEF4;
-    --ok:#2F7D4F; --ok-soft:#E2F0E7;
+    --freeze:#2C7899; --freeze-soft:#E1EEF4;
+    --ok:#2D784C; --ok-soft:#E2F0E7;
     --warn:#9A6A00; --warn-soft:#F6EDD6;
     --crit:#B3341F; --crit-soft:#F8E4DF;
     --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;

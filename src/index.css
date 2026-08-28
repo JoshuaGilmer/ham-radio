@@ -14,7 +14,10 @@
   --secondary: #eaeef0;
   --secondary-foreground: #15222b;
   --muted: #eaeef0;
-  --muted-foreground: #6e7e87;
+  /* a11y: #6e7e87 was 4.2:1 on card and 3.6:1 on secondary — under AA for the
+     9–11px uppercase labels it's used for. Darkened to clear 4.5:1 on all three
+     light surfaces (card, secondary, paper). Dark theme already passes. */
+  --muted-foreground: #606e75;
   --accent: #fbe9dd;
   --accent-foreground: #9a3d08;
   --destructive: #b3341f;
@@ -25,9 +28,11 @@
   --radius: 0.5rem;
 
   /* Ham Radio semantic set (separate from the accent) */
-  --freeze: #2e7ea1;
+  /* a11y: both were just under 4.5:1 on the paper/soft-chip backgrounds they
+     actually render on. Nudged the minimum amount to clear AA; hue unchanged. */
+  --freeze: #2c7899;
   --freeze-soft: #e1eef4;
-  --ok: #2f7d4f;
+  --ok: #2d784c;
   --ok-soft: #e2f0e7;
   --warn: #9a6a00;
   --warn-soft: #f6edd6;
