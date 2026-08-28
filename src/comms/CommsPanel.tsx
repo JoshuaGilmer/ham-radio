@@ -21,6 +21,7 @@ export function CommsPanel({ signals }: { signals: Signal[] }) {
   const [providerId, setProviderId] = useState("simulated");
   const [phone, setPhone] = useState("");
   const [key, setKey] = useState(""); // memory only — never persisted
+  const [endpoint, setEndpoint] = useState(""); // relay URL for server-side-secret providers
   const [consent, setConsent] = useState(false);
   const [signalId, setSignalId] = useState<string>("latest");
   const [sending, setSending] = useState(false);
@@ -30,12 +31,16 @@ export function CommsPanel({ signals }: { signals: Signal[] }) {
   const target = signalId === "latest" ? signals[0] : signals.find((s) => String(s.id) === signalId);
   const body = useMemo(() => (target ? composeSignalSms(target) : ""), [target]);
 
-  const ready = !!target && consent && (provider.id === "simulated" || (!!phone.trim() && (!provider.needsKey || !!key.trim())));
+  const ready =
+    !!target &&
+    consent &&
+    (provider.id === "simulated" ||
+      (!!phone.trim() && (!provider.needsKey || !!key.trim()) && (!provider.needsEndpoint || !!endpoint.trim())));
 
   const doSend = async () => {
     if (!ready || !target) return;
     setSending(true);
-    const result = await provider.send({ to: phone.trim(), body, key: key.trim() });
+    const result = await provider.send({ to: phone.trim(), body, key: key.trim(), endpoint: endpoint.trim() || undefined });
     setOutbox((o) => [
       { atWallClock: new Date().toLocaleTimeString(), provider: provider.label, to: provider.id === "simulated" ? "(on-screen)" : phone.trim(), body, result },
       ...o,
@@ -93,8 +98,16 @@ export function CommsPanel({ signals }: { signals: Signal[] }) {
             )}
             {provider.needsKey && (
               <div>
-                <Label className="mb-1.5 font-mono text-[9px] tracking-widest text-muted-foreground uppercase">API key (memory only)</Label>
+                <Label className="mb-1.5 font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
+                  {provider.needsEndpoint ? "Relay token (memory only)" : "API key (memory only)"}
+                </Label>
                 <Input type="password" autoComplete="off" value={key} onChange={(e) => setKey(e.target.value)} />
+              </div>
+            )}
+            {provider.needsEndpoint && (
+              <div>
+                <Label className="mb-1.5 font-mono text-[9px] tracking-widest text-muted-foreground uppercase">Relay URL</Label>
+                <Input placeholder="https://<your-relay>.vercel.app/api/send" value={endpoint} onChange={(e) => setEndpoint(e.target.value)} />
               </div>
             )}
           </div>

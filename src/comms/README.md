@@ -14,7 +14,7 @@ Presenter tooling for texting a judge a real SMS about the signal on screen. Liv
 |---|---|---|
 | Simulated | ✅ default | No network call; message renders in the on-screen outbox. Zero-risk demo mode. |
 | Textbelt | ✅ wired | Free tier: key `textbelt` = 1 real SMS/day (US/Canada). Browser-callable (CORS OK). Good fallback. |
-| Photon | 🔧 stub | `TODO(josh)` in `providers.ts` marks exactly where the endpoint/payload goes. If Photon blocks browser CORS, route through a free serverless function (Vercel/Cloudflare) instead of calling direct — keep the same `SmsProvider` interface. |
+| Photon | 🔌 wired via relay | Photon has no browser-callable send endpoint — sending goes through its `spectrum-ts` SDK server-side. The adapter posts to our relay (`relay/` at repo root, Vercel free tier) which holds the project secret. Needs Josh's account + relay deploy: see `relay/README.md`. |
 
 ## Demo flow
 
