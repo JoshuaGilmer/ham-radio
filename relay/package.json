@@ -1,7 +1,7 @@
 {
   "name": "ham-radio-relay",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "dependencies": {
     "@spectrum-ts/imessage": "^12.8.0",
