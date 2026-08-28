@@ -102,7 +102,7 @@ export default function App() {
 
           <TabsContent value="board">
             {showForm ? (
-              <SignalForm orgName={me.name} onSubmit={submitSignal} onCancel={() => setShowForm(false)} />
+              <SignalForm orgName={me.name} personaId={state.persona} onSubmit={submitSignal} onCancel={() => setShowForm(false)} />
             ) : (
               <div className="mb-4 flex flex-wrap items-center gap-3">
                 <Button onClick={() => setShowForm(true)}>+ Put out a signal</Button>
