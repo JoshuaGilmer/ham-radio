@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -38,6 +39,37 @@ export function SignalTicket({
   const claimer = signal.claim ? orgById(signal.claim.orgId) : null;
   const myMatch = signal.matches.find((m) => m.orgId === personaId);
   const iAmClaimer = signal.claim?.orgId === personaId;
+  const finished = signal.status === "picked_up" || signal.status === "escalated";
+  const [expanded, setExpanded] = useState(false);
+  const [showLog, setShowLog] = useState(false);
+
+  if (finished && !expanded) {
+    return (
+      <Card className={cn("gap-0 overflow-hidden rounded-lg py-0", signal.status === "escalated" && "border-crit")}>
+        <button
+          type="button"
+          aria-expanded={false}
+          onClick={() => setExpanded(true)}
+          className="flex w-full flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 text-left font-mono text-[11px] tracking-wide hover:bg-secondary"
+        >
+          <span className="font-semibold">SIGNAL #{signal.id}</span>
+          <span className="text-muted-foreground">
+            {signal.category} · {signal.qty} lbs
+          </span>
+          {signal.status === "picked_up" ? (
+            <Badge className="border-ok bg-ok-soft font-mono text-[10px] tracking-wider text-ok" variant="outline">
+              RESOLVED
+            </Badge>
+          ) : (
+            <Badge className="border-crit bg-crit-soft font-mono text-[10px] tracking-wider text-crit" variant="outline">
+              ESCALATED
+            </Badge>
+          )}
+          <span className="ml-auto text-[10px] text-muted-foreground">▸ details</span>
+        </button>
+      </Card>
+    );
+  }
 
   return (
     <Card
@@ -51,7 +83,18 @@ export function SignalTicket({
         <span className="font-semibold">
           SIGNAL #{signal.id} · {fmtClock(signal.postedAt)}
         </span>
-        <span className="text-muted-foreground">{mine ? "SENT BY YOU" : `FROM ${poster.name.toUpperCase()}`}</span>
+        <span className="flex items-center gap-3 text-muted-foreground">
+          {mine ? "SENT BY YOU" : `FROM ${poster.name.toUpperCase()}`}
+          {finished && (
+            <button
+              type="button"
+              onClick={() => setExpanded(false)}
+              className="font-semibold uppercase hover:text-foreground"
+            >
+              ▴ collapse
+            </button>
+          )}
+        </span>
       </div>
 
       <StatusRail signal={signal} />
@@ -180,6 +223,27 @@ export function SignalTicket({
           </p>
         </div>
       )}
+
+      <div className="border-t border-dashed px-4 py-2.5">
+        <button
+          type="button"
+          aria-expanded={showLog}
+          onClick={() => setShowLog(!showLog)}
+          className="font-mono text-[10px] font-semibold tracking-widest text-muted-foreground uppercase hover:text-foreground"
+        >
+          {showLog ? "▾" : "▸"} Activity · {signal.log.length}
+        </button>
+        {showLog && (
+          <ol className="mt-2 flex flex-col gap-1">
+            {signal.log.map((e, i) => (
+              <li key={i} className="flex flex-wrap items-baseline gap-x-2.5 text-xs">
+                <span className="font-mono text-[10px] whitespace-nowrap tabular-nums text-muted-foreground">{fmtClock(e.at)}</span>
+                <span>{e.msg}</span>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
     </Card>
   );
 }
