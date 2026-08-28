@@ -160,7 +160,7 @@ export default function App() {
           </TabsContent>
 
           <TabsContent value="network">
-            <NetworkTab state={state} />
+            <NetworkTab state={state} setState={setState} />
           </TabsContent>
         </Tabs>
       </main>
