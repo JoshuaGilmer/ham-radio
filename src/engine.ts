@@ -175,19 +175,26 @@ export function postSignal(s: AppState, form: SignalForm): AppState {
   const seq = s.seq + 1;
   const matches = computeMatches({ posterId: s.persona, ...form }, s);
   const n = matches.filter((m) => m.ok).length;
+  const postedDay = Math.floor(s.clock / 1440);
+  // A window that's already shut can't silently escalate on the next tick —
+  // a dead signal is loud from the moment it's sent.
+  const alreadyClosed = s.clock >= postedDay * 1440 + form.pickupEnd * 60;
   const sig: Signal = {
     id: seq,
     posterId: s.persona,
     ...form,
     postedAt: s.clock,
-    postedDay: Math.floor(s.clock / 1440),
-    status: "posted",
+    postedDay,
+    status: alreadyClosed ? "escalated" : "posted",
     claim: null,
     transport: null,
     matches,
     log: [
       { at: s.clock, msg: "Signal sent" },
       { at: s.clock, msg: `${n} of ${ORGS.length - 1} orgs notified simultaneously (physical-compatibility filter)` },
+      ...(alreadyClosed
+        ? [{ at: s.clock, msg: "Pickup window had already closed when this signal was sent — escalated immediately" }]
+        : []),
     ],
   };
   return { ...s, seq, signals: [sig, ...s.signals] };
