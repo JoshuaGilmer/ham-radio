@@ -45,18 +45,23 @@ export interface AppState {
   seq: number;
   signals: Signal[];
   confirmed: Record<string, number>; // orgId -> clock when profile last confirmed in-demo
+  profileOverrides: Record<string, Partial<Org>>; // orgId -> in-demo edits merged over the seed org
 }
 
 const LS_KEY = "hamradio-demo-v1";
 
 export function freshState(): AppState {
-  return { clock: 9 * 60, persona: "ray", seq: 47, signals: [], confirmed: {} };
+  return { clock: 9 * 60, persona: "ray", seq: 47, signals: [], confirmed: {}, profileOverrides: {} };
 }
 
 export function loadState(): AppState {
   try {
     const raw = localStorage.getItem(LS_KEY);
-    if (raw) return JSON.parse(raw) as AppState;
+    if (raw) {
+      const parsed = JSON.parse(raw) as AppState;
+      // saved states from builds before profileOverrides existed
+      return { ...parsed, profileOverrides: parsed.profileOverrides ?? {} };
+    }
   } catch {
     /* storage unavailable — run in-memory */
   }
@@ -89,9 +94,17 @@ export function fmtHour(h: number): string {
   return `${h12} ${ap}`;
 }
 
+/** The org as the demo currently sees it: profile overrides merged over the seed data. */
+export function effectiveOrg(id: string, s: Pick<AppState, "profileOverrides">): Org {
+  const base = orgById(id);
+  const ov = s.profileOverrides[id];
+  return ov ? { ...base, ...ov } : base;
+}
+
 export function lastConfirmedInfo(o: Org, s: AppState): { days: number; label: string; tone: "ok" | "warn" | "crit" } {
+  const eff = effectiveOrg(o.id, s);
   const inDemo = s.confirmed[o.id];
-  const ageMins = inDemo !== undefined ? s.clock - inDemo : o.confirmedDaysAgo * 1440 + (s.clock - 9 * 60);
+  const ageMins = inDemo !== undefined ? s.clock - inDemo : eff.confirmedDaysAgo * 1440 + (s.clock - 9 * 60);
   const days = Math.floor(ageMins / 1440);
   const tone = days <= 3 ? "ok" : days <= 10 ? "warn" : "crit";
   return { days, label: days < 1 ? "profile confirmed today" : `profile confirmed ${days}d ago`, tone };
@@ -99,9 +112,13 @@ export function lastConfirmedInfo(o: Org, s: AppState): { days: number; label: s
 
 /* ---------- matching: a physical-compatibility gate. It never scores need. ---------- */
 
-export function computeMatches(sig: Pick<Signal, "posterId" | "storageReq" | "pickupStart" | "pickupEnd" | "category">): Match[] {
-  const poster = orgById(sig.posterId);
-  return ORGS.filter((o) => o.id !== sig.posterId).map((o) => {
+export function computeMatches(
+  sig: Pick<Signal, "posterId" | "storageReq" | "pickupStart" | "pickupEnd" | "category">,
+  s: Pick<AppState, "profileOverrides"> = { profileOverrides: {} }
+): Match[] {
+  const poster = effectiveOrg(sig.posterId, s);
+  return ORGS.filter((base) => base.id !== sig.posterId).map((base) => {
+    const o = effectiveOrg(base.id, s);
     const reasons: string[] = [];
     const d = distMiles(poster, o);
     if (d > o.radius) reasons.push(`too far (${d.toFixed(1)} mi, travels ${o.radius})`);
@@ -156,7 +173,7 @@ export interface SignalForm {
 
 export function postSignal(s: AppState, form: SignalForm): AppState {
   const seq = s.seq + 1;
-  const matches = computeMatches({ posterId: s.persona, ...form });
+  const matches = computeMatches({ posterId: s.persona, ...form }, s);
   const n = matches.filter((m) => m.ok).length;
   const sig: Signal = {
     id: seq,
