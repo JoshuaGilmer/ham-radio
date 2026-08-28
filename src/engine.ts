@@ -49,6 +49,9 @@ export interface AppState {
 }
 
 const LS_KEY = "hamradio-demo-v1";
+// Bump when AppState's shape changes: any save that doesn't match resets to a
+// fresh demo instead of wedging the board with a stale structure.
+const STATE_VERSION = 2;
 
 export function freshState(): AppState {
   return { clock: 9 * 60, persona: "ray", seq: 47, signals: [], confirmed: {}, profileOverrides: {} };
@@ -58,9 +61,8 @@ export function loadState(): AppState {
   try {
     const raw = localStorage.getItem(LS_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw) as AppState;
-      // saved states from builds before profileOverrides existed
-      return { ...parsed, profileOverrides: parsed.profileOverrides ?? {} };
+      const { v, ...parsed } = JSON.parse(raw) as AppState & { v?: number };
+      if (v === STATE_VERSION) return parsed;
     }
   } catch {
     /* storage unavailable — run in-memory */
@@ -70,7 +72,7 @@ export function loadState(): AppState {
 
 export function saveState(s: AppState): void {
   try {
-    localStorage.setItem(LS_KEY, JSON.stringify(s));
+    localStorage.setItem(LS_KEY, JSON.stringify({ ...s, v: STATE_VERSION }));
   } catch {
     /* storage unavailable — demo still works in-memory */
   }
