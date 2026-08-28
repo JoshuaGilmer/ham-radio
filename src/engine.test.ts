@@ -293,3 +293,22 @@ describe("loadScenario", () => {
     expect(loadScenario("noTakers")).toEqual(loadScenario("noTakers"));
   });
 });
+
+describe("posting after the window has closed", () => {
+  test("a signal posted past its own pickup window escalates immediately and loudly", () => {
+    const s = postSignal({ ...freshState(), clock: 19 * 60 }, dairyForm); // Mon 7 PM, window 1-6 PM
+    const sig = s.signals[0];
+    expect(sig.status).toBe("escalated");
+    expect(sig.log.at(-1)!.msg).toContain("already closed");
+  });
+
+  test("posting exactly at window close also escalates immediately", () => {
+    const s = postSignal({ ...freshState(), clock: 18 * 60 }, dairyForm);
+    expect(s.signals[0].status).toBe("escalated");
+  });
+
+  test("posting one minute before window close stays posted", () => {
+    const s = postSignal({ ...freshState(), clock: 18 * 60 - 1 }, dairyForm);
+    expect(s.signals[0].status).toBe("posted");
+  });
+});
