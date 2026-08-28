@@ -54,7 +54,7 @@ export default function App() {
         <span className="font-display text-xl font-extrabold tracking-tight">
           Ham Radio<span className="text-primary">.</span>
         </span>
-        <div className="flex items-center gap-1.5 font-mono text-xs">
+        <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs">
           <span className="text-[10px] tracking-widest text-muted-foreground uppercase">Demo clock</span>
           <span className="min-w-[8.5ch] rounded border bg-secondary px-2 py-1 text-center font-semibold tabular-nums">
             {fmtClock(state.clock)}
