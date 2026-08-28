@@ -8,6 +8,7 @@ import {
   effectiveOrg,
   freshState,
   lastConfirmedInfo,
+  loadScenario,
   loadState,
   pickupSignal,
   postSignal,
@@ -112,7 +113,7 @@ describe("loadState migration", () => {
 
 const dairyForm: SignalForm = {
   category: "dairy",
-  qty: "120 lbs",
+  qty: "120",
   storageReq: "cold",
   expiresHrs: "72",
   pickupStart: 13,
@@ -263,5 +264,32 @@ describe("signal lifecycle", () => {
 
     // picking up before the poster confirms is a no-op
     expect(pickupSignal(s, id).signals[0].status).toBe("claimed");
+  });
+});
+
+describe("loadScenario", () => {
+  test("happy path: signal posted, matches computed, presenter lands one tap from claiming", () => {
+    const s = loadScenario("happy");
+    expect(s.signals).toHaveLength(1);
+    const sig = s.signals[0];
+    expect(sig.status).toBe("posted");
+    // the presenter persona is a matched org, not the poster — ready to claim
+    expect(s.persona).not.toBe(sig.posterId);
+    expect(sig.matches.find((m) => m.orgId === s.persona)?.ok).toBe(true);
+    expect(sig.matches.filter((m) => m.ok).length).toBeGreaterThan(0);
+  });
+
+  test("no takers: signal still posted, exactly one +15m click from escalating", () => {
+    const s = loadScenario("noTakers");
+    expect(s.signals).toHaveLength(1);
+    expect(s.signals[0].status).toBe("posted");
+    // the poster is watching their own board when it escalates
+    expect(s.persona).toBe(s.signals[0].posterId);
+    expect(advanceClock(s, 15).signals[0].status).toBe("escalated");
+  });
+
+  test("scenarios are pure: two loads produce identical states", () => {
+    expect(loadScenario("happy")).toEqual(loadScenario("happy"));
+    expect(loadScenario("noTakers")).toEqual(loadScenario("noTakers"));
   });
 });
