@@ -1,0 +1,198 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Ham Radio — for judges</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#F4F6F7; --panel:#FFFFFF; --panel-2:#EAEEF0;
+    --ink:#15222B; --ink-soft:#44555F; --ink-faint:#6E7E87; --line:#D4DBDF;
+    --flare:#E85D0F; --flare-soft:#FBE9DD;
+    --freeze:#2E7EA1; --freeze-soft:#E1EEF4;
+    --ok:#2F7D4F; --ok-soft:#E2F0E7;
+    --warn:#9A6A00; --warn-soft:#F6EDD6;
+    --crit:#B3341F; --crit-soft:#F8E4DF;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --disp:'Archivo','Helvetica Neue',Arial,sans-serif;
+    --body:'Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#101B22; --panel:#182631; --panel-2:#0C151B;
+      --ink:#E7EDF0; --ink-soft:#AEBEC7; --ink-faint:#7E909A; --line:#2C3E4A;
+      --flare:#F4793B; --flare-soft:#3A2416;
+      --freeze:#63AECF; --freeze-soft:#173240;
+      --ok:#6DBE8E; --ok-soft:#16301F;
+      --warn:#D9A93F; --warn-soft:#33290F;
+      --crit:#E0705C; --crit-soft:#3A1B14;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#101B22; --panel:#182631; --panel-2:#0C151B;
+    --ink:#E7EDF0; --ink-soft:#AEBEC7; --ink-faint:#7E909A; --line:#2C3E4A;
+    --flare:#F4793B; --flare-soft:#3A2416;
+    --freeze:#63AECF; --freeze-soft:#173240;
+    --ok:#6DBE8E; --ok-soft:#16301F;
+    --warn:#D9A93F; --warn-soft:#33290F;
+    --crit:#E0705C; --crit-soft:#3A1B14;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.6;margin:0;font-size:17px;}
+  .wrap{max-width:46rem;margin:0 auto;padding:2.5rem 1.25rem 4rem;}
+  .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-faint);display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;}
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--flare);display:inline-block;flex:none;}
+  h1{font-family:var(--disp);font-weight:800;font-size:clamp(2.2rem,7vw,3.2rem);
+    letter-spacing:-.02em;margin:.5rem 0 .25rem;line-height:1.04;text-wrap:balance;}
+  h1 .spark{color:var(--flare);}
+  .kicker{font-size:1.12rem;color:var(--ink-soft);margin:0 0 .5rem;max-width:38rem;text-wrap:balance;}
+  h2{font-family:var(--disp);font-weight:700;font-size:1.3rem;letter-spacing:-.01em;
+    margin:2.75rem 0 .75rem;line-height:1.2;text-wrap:balance;}
+  p{margin:.65rem 0;}
+  .secno{font-family:var(--mono);font-size:.72rem;color:var(--flare);letter-spacing:.12em;
+    display:block;margin-bottom:.15rem;font-weight:600;}
+  a{color:var(--freeze);}
+  .rule{border:0;border-top:1px solid var(--line);margin:2.25rem 0;}
+
+  /* DEMO banner — guardrail 4, stays on every surface */
+  .demo{display:flex;gap:.75rem;align-items:flex-start;background:var(--flare-soft);
+    border:1px solid var(--flare);border-radius:6px;padding:.7rem .9rem;margin:1.5rem 0 0;}
+  .demo .stamp{font-family:var(--mono);font-size:.68rem;font-weight:600;letter-spacing:.1em;
+    background:var(--flare);color:#fff;padding:.28rem .5rem;border-radius:3px;white-space:nowrap;flex:none;}
+  .demo p{margin:0;font-size:.9rem;color:var(--ink-soft);}
+
+  /* the decision moment */
+  .moment{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--flare);
+    padding:1rem 1.15rem;border-radius:0 6px 6px 0;margin:1.25rem 0;}
+  .moment p{margin:.4rem 0;font-size:1.02rem;}
+  .facts{display:flex;flex-wrap:wrap;gap:.4rem;margin:.9rem 0 0;list-style:none;padding:0;}
+  .facts li{font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;
+    background:var(--panel-2);border:1px solid var(--line);color:var(--ink-soft);
+    padding:.28rem .55rem;border-radius:3px;margin:0;}
+
+  /* tables */
+  .scroll{overflow-x:auto;}
+  .tbl{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.94rem;min-width:30rem;}
+  .tbl th,.tbl td{text-align:left;vertical-align:top;padding:.7rem .8rem;border-bottom:1px solid var(--line);}
+  .tbl thead th{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-faint);font-weight:600;}
+  .tbl td:first-child{font-weight:700;width:34%;}
+  .tbl tbody tr:last-child td{border-bottom:0;}
+  .tick{color:var(--ok);font-weight:700;}
+
+  /* rehearsed answers */
+  .qa{background:var(--panel);border:1px solid var(--line);border-radius:6px;
+    padding:1rem 1.15rem;margin:1.1rem 0;}
+  .qa .q{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--crit);font-weight:600;margin:0 0 .35rem;}
+  .qa .ask{font-weight:700;margin:0 0 .6rem;color:var(--ink);}
+  .qa .ans{margin:0;color:var(--ink-soft);}
+
+  footer.foot{margin-top:3rem;padding-top:1.25rem;border-top:1px solid var(--line);
+    font-size:.85rem;color:var(--ink-faint);}
+
+  /* stretch #5 — works as a printed handout */
+  @media print{
+    :root{--paper:#fff;--panel:#fff;--panel-2:#fff;--ink:#000;--ink-soft:#333;--ink-faint:#555;--line:#bbb;}
+    body{font-size:11pt;}
+    .wrap{max-width:none;padding:0;}
+    h2{margin-top:1.4rem;page-break-after:avoid;}
+    .qa,.moment,.demo,.tbl{page-break-inside:avoid;}
+    .tbl{min-width:0;}
+    a[href^="http"]::after{content:" (" attr(href) ")";font-size:8pt;color:#555;}
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="eyebrow"><span class="dot"></span> Claude Impact Lab · Birmingham AI <span>·</span> Food coordination track <span>·</span> For judges</div>
+  <h1>Ham Radio<span class="spark">.</span></h1>
+  <p class="kicker">Every pantry a station: broadcast expiring surplus sideways across the pantry network — before the clock runs out.</p>
+
+  <div class="demo">
+    <span class="stamp">DEMO</span>
+    <p>Everything in the running demo is synthetic. Org names are obviously fictional and every number on screen is invented. The only real links on this page are the verified emergency resources at the bottom.</p>
+  </div>
+
+  <h2><span class="secno">§1</span> The one person, the one moment</h2>
+  <p>Ray is the volunteer coordinator of a small church food pantry — one of the Community Food Bank of Central Alabama's ~300 partner agencies. He barcodes everything and tracks every expiration date. His problem isn't inventory; it's the gap between when food expires and when his distribution runs.</p>
+
+  <div class="moment">
+    <p><strong>The decision moment.</strong> Monday's inventory check surfaces 120 lbs of food expiring within 72 hours. His distribution is Wednesday — and Wednesday can't absorb it. Today he spends the next hours serially phoning pantries in his personal network: "I've got X, can you take it? What can you send back so the truck isn't empty?"</p>
+    <ul class="facts">
+      <li>120 LBS</li><li>72-HOUR CLOCK</li><li>NEXT DISTRIBUTION: WED</li><li>8–10 HRS/WK ON THE PHONE</li>
+    </ul>
+  </div>
+
+  <p><strong>We disclose his geography rather than fudge it.</strong> Ray is modeled on a real coordinator in one of our team's families, who runs this exact workflow manually in western North Carolina and cut his pantry's annual food waste from $3–5k to under $500 by doing it. He isn't in Birmingham. Birmingham has roughly 300 structurally identical seats operating under worse conditions — ~3M lbs cut from CFBCA's 2025 supply, ~80,000 Alabamians losing SNAP this month. "One person" is a design discipline, not a residency requirement.</p>
+
+  <p>Birmingham's gap is not food or organizations; it's that supply and demand can't see each other in time. FeedBHM already rescues donor surplus into the network. CFBCA's fleet moves food down from the warehouse. <strong>Nothing moves food sideways — pantry to pantry — when expiry outruns a distribution schedule.</strong> That lateral move is currently one man's phone tree, and Ham Radio replaces it with one asynchronous post.</p>
+
+  <hr class="rule">
+
+  <h2><span class="secno">§2</span> Rubric fit</h2>
+  <div class="scroll">
+  <table class="tbl">
+    <thead><tr><th>Criterion</th><th>How Ham Radio scores</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>One person, one moment</td>
+        <td>Ray, at Monday inventory check, holding 120 lbs and a 72-hour clock. Every screen in the demo is his screen or his counterpart's.</td>
+      </tr>
+      <tr>
+        <td>Smallest intervention</td>
+        <td>One form, one filter, one claim button, one status rail. No inventory system, no accounts overhaul, no new network — it rides CFBCA's existing 300-agency relationships. Real-world evidence the workflow works: the manual version already saves one pantry ~$3–4k/yr and 8–10 hrs/wk.</td>
+      </tr>
+      <tr>
+        <td>Doesn't relocate friction</td>
+        <td>The people receiving signals are the same people fielding Ray's phone calls today — except now it's asynchronous, filtered to physical compatibility, and ignorable at zero cost, because non-response just escalates. Nobody is asked to maintain an inventory database, and profile upkeep is incentive-aligned: a stale profile means you stop receiving free food.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2><span class="secno">§3</span> Guardrail compliance</h2>
+  <div class="scroll">
+  <table class="tbl">
+    <thead><tr><th>Rule</th><th>How we comply</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tick">✓</span> No static directory</td>
+        <td>Signals auto-expire; the only availability data is self-declared, point-in-time, and self-deleting. Ham Radio structurally cannot rot into a stale directory.</td></tr>
+      <tr><td><span class="tick">✓</span> No private client data</td>
+        <td>Org-to-org only. No client ever touches the system; no names, no eligibility records, nothing.</td></tr>
+      <tr><td><span class="tick">✓</span> No rationing by algorithm</td>
+        <td>The filter gates physical safety — can you store frozen food, can you get there in time. It never scores need or decides shares. All matches are notified simultaneously; humans claim and confirm every transfer.</td></tr>
+      <tr><td><span class="tick">✓</span> No synthetic-as-live</td>
+        <td>Persistent DEMO banner, obviously fictional org names, and we say out loud in the demo: "every number on this screen is invented."</td></tr>
+      <tr><td><span class="tick">✓</span> Preserve verified emergency links</td>
+        <td>Baked into the failure path — the escalation screen carries verified 211 and CFBCA links.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2><span class="secno">§4</span> The two questions we expect</h2>
+
+  <div class="qa">
+    <p class="q">Judge</p>
+    <p class="ask">"You've turned Ray's 8 hours into notification fatigue for eleven other coordinators. How is that not relocating the friction?"</p>
+    <p class="ans">Those eleven coordinators are already fielding Ray's phone calls today — synchronously, unfiltered, mid-task. Ham Radio makes the same signal asynchronous, filtered to food they can physically store, near them, during hours they're open — and ignorable at zero cost, because a signal nobody claims escalates on its own. The friction isn't relocated; it's shrunk and made optional at every node.</p>
+  </div>
+
+  <div class="qa">
+    <p class="q">Judge</p>
+    <p class="ask">"First-come-first-served is an algorithm allocating food."</p>
+    <p class="ans">The filter gates physical safety — can you store frozen food, can you reach it before it spoils. It never scores need and never decides shares. All compatible orgs are notified at the same moment, and a human confirms both ends of every transfer. Rationing is when software decides who deserves food; Ham Radio only decides who can safely receive a message.</p>
+  </div>
+
+  <footer class="foot">
+    <p>Ham Radio · Claude Impact Lab, Birmingham AI · Food coordination track. Built on public information and synthetic data only — no real client data, no live availability claims.</p>
+    <p>Verified links (real):
+      <a href="https://www.211connectsalabama.org" target="_blank" rel="noopener noreferrer">211 Connects Alabama</a> ·
+      <a href="https://feedingal.org" target="_blank" rel="noopener noreferrer">Community Food Bank of Central Alabama</a> ·
+      <a href="https://gracekleincommunity.com" target="_blank" rel="noopener noreferrer">Grace Klein / FeedBHM volunteer drivers</a>
+    </p>
+    <p>Full red-teamed PRD: <a href="./prd.html">prd.html</a></p>
+  </footer>
+
+</div>
