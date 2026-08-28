@@ -1,4 +1,5 @@
-<title>Flare</title>
+<meta charset="utf-8">
+<title>Ham Radio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
@@ -130,7 +131,7 @@
   .rail .arrow{color:var(--ink-faint);padding:0 .4rem;}
   .rail .st.gone{border-style:dashed;border-radius:0 5px 5px 0;}
 
-  /* flare ticket */
+  /* signal ticket */
   .ticket{
     background:var(--panel);border:1px solid var(--line);border-radius:8px;
     margin:1.5rem 0;overflow:hidden;box-shadow:0 1px 3px rgba(21,34,43,.06);
@@ -218,8 +219,8 @@
   <div class="eyebrow">
     <span>Claude Impact Lab</span><span class="dot"></span><span>Birmingham AI</span><span class="dot"></span><span>Food Coordination · PRD v1.1</span>
   </div>
-  <h1>Flare<span class="spark">.</span></h1>
-  <p class="kicker">A claim board for expiring surplus, moving food <em>sideways</em> between Birmingham's pantry network — before the clock runs out.</p>
+  <h1>Ham Radio<span class="spark">.</span></h1>
+  <p class="kicker">Every pantry a station: broadcast expiring surplus <em>sideways</em> across Birmingham's pantry network — before the clock runs out.</p>
 
   <div class="verdict">
     <span class="stamp">RED-TEAMED</span>
@@ -233,13 +234,13 @@
 
   <h2><span class="secno">§2</span>The friction we remove — and refuse to relocate</h2>
   <p>Birmingham's gap is not food or organizations; it's that supply and demand can't see each other in time. Grace Klein's FeedBHM already rescues donor surplus <em>into</em> the network. CFBCA's fleet moves food <em>down</em> from the warehouse. <strong>Nothing moves food sideways</strong> — pantry to pantry — when expiry outruns a distribution schedule. That lateral move is currently one man's phone tree.</p>
-  <p>Flare replaces the phone tree with one asynchronous post. The friction it removes is Ray's serial calling; the friction it must <em>not</em> create is notification spam for eleven other overworked coordinators. That constraint drives the whole design.</p>
+  <p>Ham Radio replaces the phone tree with one asynchronous post. The friction it removes is Ray's serial calling; the friction it must <em>not</em> create is notification spam for eleven other overworked coordinators. That constraint drives the whole design.</p>
 
   <h2><span class="secno">§3</span>How it works</h2>
 
   <div class="ticket">
     <div class="ticket-head">
-      <span class="id">FLARE&nbsp;#0047 · POSTED 9:14 AM</span>
+      <span class="id">SIGNAL&nbsp;#0047 · POSTED 9:14 AM</span>
       <span class="demo">DEMO — ALL DATA SYNTHETIC</span>
     </div>
     <div class="ticket-body">
@@ -258,39 +259,39 @@
     </div>
   </div>
 
-  <div class="rail" aria-label="Flare status lifecycle">
+  <div class="rail" aria-label="Ham Radio status lifecycle">
     <span class="st">POSTED</span><span class="arrow">→</span>
     <span class="st hot">CLAIMED · 30-min hold</span><span class="arrow">→</span>
     <span class="st">CONFIRMED</span><span class="arrow">→</span>
     <span class="st done">PICKED&nbsp;UP</span>
   </div>
-  <div class="rail" aria-label="Flare failure path">
+  <div class="rail" aria-label="Ham Radio failure path">
     <span class="st">POSTED</span><span class="arrow">→</span>
     <span class="st">NO&nbsp;TAKERS</span><span class="arrow">→</span>
     <span class="st gone">ESCALATE · CFBCA desk + verified 211 links</span>
   </div>
 
   <ol>
-    <li><strong>Post.</strong> Ray files a flare in ~60 seconds: category, quantity, storage requirement, expiry window, pickup window, and — the field no rescue app models — <strong>his next distribution date</strong>, the reason the food can't wait.</li>
+    <li><strong>Post.</strong> Ray files a signal in ~60 seconds: category, quantity, storage requirement, expiry window, pickup window, and — the field no rescue app models — <strong>his next distribution date</strong>, the reason the food can't wait.</li>
     <li><strong>Targeted fan-out.</strong> A rule-based compatibility filter notifies <em>only</em> orgs that can physically take it: storage capability ≥ requirement, within radius, open hours overlapping the pickup window, opted-in categories. All matches are notified <strong>simultaneously</strong> — no ranking, no scoring.</li>
-    <li><strong>Claim &amp; confirm.</strong> First tap holds the flare for 30 minutes. Ray gets one notification and confirms. A human says yes on both ends of every transfer — the tool never decides.</li>
+    <li><strong>Claim &amp; confirm.</strong> First tap holds the signal for 30 minutes. Ray gets one notification and confirms. A human says yes on both ends of every transfer — the tool never decides.</li>
     <li><strong>Move it.</strong> The claim records <em>who moves it</em>: claimer picks up, poster drops off, or "needs a volunteer driver" — which links out to FeedBHM's existing driver network. Their app becomes our transport layer, not our competitor.</li>
-    <li><strong>Resolve or escalate.</strong> Both parties see the status rail. If nobody claims before the window closes, the flare escalates to CFBCA's agency-relations desk, with verified 211 and emergency links preserved on screen. A dead flare is loud, never silent.</li>
+    <li><strong>Resolve or escalate.</strong> Both parties see the status rail. If nobody claims before the window closes, the signal escalates to CFBCA's agency-relations desk, with verified 211 and emergency links preserved on screen. A dead signal is loud, never silent.</li>
   </ol>
-  <p>Every flare <strong>auto-expires</strong>. Nothing in the system persists as availability data — the only claim about what's on a shelf is one a human just typed about their own shelf, and it deletes itself. Flare structurally cannot rot into a stale directory.</p>
+  <p>Every signal <strong>auto-expires</strong>. Nothing in the system persists as availability data — the only claim about what's on a shelf is one a human just typed about their own shelf, and it deletes itself. Ham Radio structurally cannot rot into a stale directory.</p>
 
   <h2><span class="secno">§4</span>Rubric fit</h2>
   <div class="tbl-wrap"><table>
-    <tr><th>Criterion</th><th>How Flare scores</th></tr>
+    <tr><th>Criterion</th><th>How Ham Radio scores</th></tr>
     <tr><td>One person, one moment</td><td>Ray, at Monday inventory check, holding 120 lbs and a 72-hour clock. Every screen in the demo is his screen or his counterpart's.</td></tr>
     <tr><td>Smallest intervention</td><td>One form, one filter, one claim button, one status rail. No inventory system, no accounts overhaul, no new network — it rides CFBCA's existing 300-agency relationships. Real-world evidence the workflow works: the manual version already saves one pantry ~<span class="num">$3–4k</span>/yr and <span class="num">8–10</span> hrs/wk.</td></tr>
-    <tr><td>Doesn't relocate friction</td><td>The people receiving flares are the same people fielding Ray's phone calls today — except now it's asynchronous, filtered to physical compatibility, and ignorable at zero cost (non-response just escalates). Nobody is asked to maintain an inventory database. Profile upkeep is incentive-aligned: a stale profile means you stop receiving free food (§7, attack 2).</td></tr>
+    <tr><td>Doesn't relocate friction</td><td>The people receiving signals are the same people fielding Ray's phone calls today — except now it's asynchronous, filtered to physical compatibility, and ignorable at zero cost (non-response just escalates). Nobody is asked to maintain an inventory database. Profile upkeep is incentive-aligned: a stale profile means you stop receiving free food (§7, attack 2).</td></tr>
   </table></div>
 
   <h2><span class="secno">§5</span>Guardrail compliance</h2>
   <div class="tbl-wrap"><table>
     <tr><th>Rule</th><th>How we comply</th></tr>
-    <tr><td>No static directory</td><td>Flares auto-expire; the only availability data is self-declared, point-in-time, and self-deleting.</td></tr>
+    <tr><td>No static directory</td><td>Signals auto-expire; the only availability data is self-declared, point-in-time, and self-deleting.</td></tr>
     <tr><td>No private client data</td><td>Org-to-org only. No client ever touches the system; no names, no eligibility records, nothing.</td></tr>
     <tr><td>No rationing by algorithm</td><td>The filter gates <em>physical safety</em> (can you store frozen food, can you get there in time) — it never scores need or decides shares. All matches notified simultaneously; humans claim and confirm every transfer.</td></tr>
     <tr><td>No synthetic-as-live</td><td>Persistent DEMO banner, obviously fictional org names, and we say out loud in the demo: "every number on this screen is invented."</td></tr>
@@ -301,8 +302,8 @@
   <p>Single-page app, no backend, state in memory/localStorage, notifications simulated in-app (we do not touch a messaging API on hackathon wifi). Synthetic 12-org network with profiles: storage, hours, radius, transport, standing needs — all fictional names.</p>
   <div class="tbl-wrap"><table class="clock">
     <tr><th>Clock</th><th>Block</th><th>Output</th></tr>
-    <tr><td>0:00–0:30</td><td>Seed &amp; skeleton</td><td>Synthetic org profiles, flare data model, page shell with DEMO banner</td></tr>
-    <tr><td>0:30–1:15</td><td>Post &amp; match</td><td>Flare form (incl. next-distribution date), compatibility filter, "4 of 12 orgs notified" view</td></tr>
+    <tr><td>0:00–0:30</td><td>Seed &amp; skeleton</td><td>Synthetic org profiles, signal data model, page shell with DEMO banner</td></tr>
+    <tr><td>0:30–1:15</td><td>Post &amp; match</td><td>Signal form (incl. next-distribution date), compatibility filter, "4 of 12 orgs notified" view</td></tr>
     <tr><td>1:15–2:00</td><td>Claim &amp; confirm</td><td>30-min hold, both-ends confirmation, status rail, "who moves it" field with FeedBHM link-out</td></tr>
     <tr><td>2:00–2:30</td><td>Failure path</td><td>No-takers escalation to CFBCA desk with verified 211 links; "profile last confirmed" chip</td></tr>
     <tr><td>2:30–3:00</td><td>Demo polish</td><td>Persona switcher (Ray / claiming org), two scripted scenarios, rehearse the two lines (§8)</td></tr>
@@ -314,11 +315,11 @@
 
   <div class="attack">
     <div class="head"><span class="name">1 · "Isn't this just FeedBHM?"</span><span class="chip fixed">FIXED IN PRODUCT</span></div>
-    <p>The mechanic resembles Grace Klein's rescue app with the poster swapped. <b>Resolution:</b> the differentiation now lives in the UI, not the pitch — the flare form models the <b>next-distribution date</b> (the schedule-mismatch trigger no rescue app has), the flow is lateral (pantry↔pantry, not donor→network), and FeedBHM is wired in as our volunteer-driver transport layer. Competitor became complement.</p>
+    <p>The mechanic resembles Grace Klein's rescue app with the poster swapped. <b>Resolution:</b> the differentiation now lives in the UI, not the pitch — the signal form models the <b>next-distribution date</b> (the schedule-mismatch trigger no rescue app has), the flow is lateral (pantry↔pantry, not donor→network), and FeedBHM is wired in as our volunteer-driver transport layer. Competitor became complement.</p>
   </div>
   <div class="attack">
     <div class="head"><span class="name">2 · "Org profiles are a static directory in a trench coat — maintaining them is the relocated friction."</span><span class="chip fixed">FIXED IN PRODUCT</span></div>
-    <p>The killer question, and we answer it unprompted. <b>Resolution:</b> profiles are self-maintained by the org that benefits — stale profile = you stop receiving free food, an incentive 211 never had; a confirm-your-profile micro-prompt fires at claim time so using the system refreshes the data; and a mis-targeted flare degrades gracefully — it goes unclaimed and escalates, never strands food silently. A "profile last confirmed: 3 days ago" chip ships in the demo UI.</p>
+    <p>The killer question, and we answer it unprompted. <b>Resolution:</b> profiles are self-maintained by the org that benefits — stale profile = you stop receiving free food, an incentive 211 never had; a confirm-your-profile micro-prompt fires at claim time so using the system refreshes the data; and a mis-targeted signal degrades gracefully — it goes unclaimed and escalates, never strands food silently. A "profile last confirmed: 3 days ago" chip ships in the demo UI.</p>
   </div>
   <div class="attack">
     <div class="head"><span class="name">3 · "Ray's phone tree currently beats you — cold start kills claim boards."</span><span class="chip talk">ADOPTION STORY</span></div>
@@ -332,18 +333,18 @@
     <div class="head"><span class="name">5 · "Backhaul is a second product hiding in step 4."</span><span class="chip cut">CUT TO ONE LINE</span></div>
     <p>Standing-needs matching doubles the data model and contradicts our own "smallest intervention" claim. <b>Resolution:</b> demoted to a single hardcoded suggestion on the confirmation screen ("Bethel has a standing need for rice — bring some?") plus one roadmap sentence. The idea's judge-appeal at 2% of its cost.</p>
   </div>
-  <p>Also resolved: first-tap-claims is defensible as safety-gating, not rationing — and we deliberately do <em>not</em> add ranked or wave-based notification, which would make the algorithm's role bigger (<span class="chip talk">REHEARSED</span>); Ray's geography is disclosed, not fudged (<span class="chip talk">REHEARSED</span>); synthetic data uses obviously fictional names under a persistent DEMO banner (<span class="chip keep">TRIPWIRE</span>). The counterparty also weighed pivots — a SNAP navigator scores high on impact but walks into the do-not-build list; every directory-adjacent idea is prohibited by construction. <strong>Flare's problems are all answerable; the alternatives' problems are structural.</strong></p>
+  <p>Also resolved: first-tap-claims is defensible as safety-gating, not rationing — and we deliberately do <em>not</em> add ranked or wave-based notification, which would make the algorithm's role bigger (<span class="chip talk">REHEARSED</span>); Ray's geography is disclosed, not fudged (<span class="chip talk">REHEARSED</span>); synthetic data uses obviously fictional names under a persistent DEMO banner (<span class="chip keep">TRIPWIRE</span>). The counterparty also weighed pivots — a SNAP navigator scores high on impact but walks into the do-not-build list; every directory-adjacent idea is prohibited by construction. <strong>Ham Radio's problems are all answerable; the alternatives' problems are structural.</strong></p>
 
   <h2><span class="secno">§8</span>Demo script &amp; the two rehearsed lines</h2>
-  <p><strong>Scenario A (happy path):</strong> as Ray — post the dairy flare, watch "4 of 12 orgs notified," switch persona to the claiming org, claim, switch back, confirm, choose transport, land on PICKED UP. <strong>Scenario B (failure path):</strong> post a flare nobody claims — show the escalation screen with CFBCA desk and verified 211 links. Say once, out loud: <em>"every number on this screen is invented."</em></p>
+  <p><strong>Scenario A (happy path):</strong> as Ray — post the dairy signal, watch "4 of 12 orgs notified," switch persona to the claiming org, claim, switch back, confirm, choose transport, land on PICKED UP. <strong>Scenario B (failure path):</strong> post a signal nobody claims — show the escalation screen with CFBCA desk and verified 211 links. Say once, out loud: <em>"every number on this screen is invented."</em></p>
   <div class="line-card">
     <span class="q">JUDGE: "You've turned Ray's 8 hours into notification fatigue for eleven other coordinators. How is that not relocating the friction?"</span>
-    <p>Those eleven coordinators are already fielding Ray's phone calls today — synchronously, unfiltered, mid-task. Flare makes the same signal asynchronous, filtered to food they can physically store, near them, during hours they're open — and ignorable at zero cost, because a flare nobody claims escalates on its own. The friction isn't relocated; it's shrunk and made optional at every node.</p>
+    <p>Those eleven coordinators are already fielding Ray's phone calls today — synchronously, unfiltered, mid-task. Ham Radio makes the same signal asynchronous, filtered to food they can physically store, near them, during hours they're open — and ignorable at zero cost, because a signal nobody claims escalates on its own. The friction isn't relocated; it's shrunk and made optional at every node.</p>
   </div>
   <div class="line-card">
     <span class="q">JUDGE: "First-come-first-served is an algorithm allocating food."</span>
-    <p>The filter gates physical safety — can you store frozen food, can you reach it before it spoils. It never scores need and never decides shares. All compatible orgs are notified at the same moment, and a human confirms both ends of every transfer. Rationing is when software decides who deserves food; Flare only decides who can safely receive a message.</p>
+    <p>The filter gates physical safety — can you store frozen food, can you reach it before it spoils. It never scores need and never decides shares. All compatible orgs are notified at the same moment, and a human confirms both ends of every transfer. Rationing is when software decides who deserves food; Ham Radio only decides who can safely receive a message.</p>
   </div>
 
-  <p class="footnote">Flare · Claude Impact Lab, Birmingham AI · Food coordination track. Built on public information and synthetic data only — no real client data, no live availability claims. Sources for context figures: BirminghamWatch, WBRC (2025–26 SNAP coverage), CFBCA, Grace Klein Community.</p>
+  <p class="footnote">Ham Radio · Claude Impact Lab, Birmingham AI · Food coordination track. Built on public information and synthetic data only — no real client data, no live availability claims. Sources for context figures: BirminghamWatch, WBRC (2025–26 SNAP coverage), CFBCA, Grace Klein Community.</p>
 </div>

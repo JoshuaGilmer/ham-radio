@@ -1,0 +1,614 @@
+<meta charset="utf-8">
+<title>Ham Radio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#F4F6F7; --panel:#FFFFFF; --panel-2:#EAEEF0; --ink:#15222B;
+    --ink-soft:#44555F; --ink-faint:#6E7E87; --line:#D4DBDF;
+    --flare:#E85D0F; --flare-soft:#FBE9DD; --freeze:#2E7EA1; --freeze-soft:#E1EEF4;
+    --ok:#2F7D4F; --ok-soft:#E2F0E7; --warn:#9A6A00; --warn-soft:#F6EDD6;
+    --crit:#B3341F; --crit-soft:#F8E4DF;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --disp:'Archivo','Helvetica Neue',Arial,sans-serif;
+    --body:'Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#101B22; --panel:#182631; --panel-2:#0C151B; --ink:#E7EDF0;
+      --ink-soft:#AEBEC7; --ink-faint:#7E909A; --line:#2C3E4A;
+      --flare:#F4793B; --flare-soft:#3A2416; --freeze:#63AECF; --freeze-soft:#173240;
+      --ok:#6DBE8E; --ok-soft:#16301F; --warn:#D9A93F; --warn-soft:#33290F;
+      --crit:#E0705C; --crit-soft:#3A1B14;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#101B22; --panel:#182631; --panel-2:#0C151B; --ink:#E7EDF0;
+    --ink-soft:#AEBEC7; --ink-faint:#7E909A; --line:#2C3E4A;
+    --flare:#F4793B; --flare-soft:#3A2416; --freeze:#63AECF; --freeze-soft:#173240;
+    --ok:#6DBE8E; --ok-soft:#16301F; --warn:#D9A93F; --warn-soft:#33290F;
+    --crit:#E0705C; --crit-soft:#3A1B14;
+  }
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);margin:0;line-height:1.55;font-size:16px;}
+  button{font-family:inherit;cursor:pointer;}
+  button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--flare);outline-offset:2px;}
+  a{color:var(--freeze);}
+
+  .demo-banner{
+    background:var(--warn-soft);color:var(--warn);border-bottom:1px solid var(--warn);
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;font-weight:600;
+    text-align:center;padding:.45rem .75rem;position:sticky;top:0;z-index:50;
+  }
+  header.bar{
+    display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+    padding:.85rem 1.25rem;border-bottom:1px solid var(--line);background:var(--panel);
+  }
+  .wordmark{font-family:var(--disp);font-weight:800;font-size:1.35rem;letter-spacing:-.02em;}
+  .wordmark .spark{color:var(--flare);}
+  .bar .spacer{flex:1;}
+  .clockbox{display:flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:.8rem;}
+  .clockbox .t{font-weight:600;background:var(--panel-2);border:1px solid var(--line);padding:.3rem .6rem;border-radius:4px;min-width:8.5ch;text-align:center;font-variant-numeric:tabular-nums;}
+  .btn{
+    font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:.05em;
+    border:1px solid var(--line);background:var(--panel);color:var(--ink);
+    padding:.35rem .7rem;border-radius:4px;
+  }
+  .btn:hover{border-color:var(--ink-faint);}
+  .btn.primary{background:var(--flare);border-color:var(--flare);color:#fff;}
+  .btn.primary:hover{filter:brightness(1.06);}
+  .btn.ghost{background:transparent;}
+  .btn.small{font-size:.68rem;padding:.25rem .55rem;}
+  select.persona{
+    font-family:var(--mono);font-size:.78rem;font-weight:600;color:var(--ink);
+    background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:.35rem .5rem;max-width:16rem;
+  }
+  .viewing{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase;}
+
+  main{max-width:64rem;margin:0 auto;padding:1.25rem 1.25rem 4rem;}
+  .tabs{display:flex;gap:.4rem;margin:.5rem 0 1.25rem;border-bottom:1px solid var(--line);}
+  .tab{
+    font-family:var(--disp);font-weight:700;font-size:.92rem;background:none;border:none;
+    color:var(--ink-faint);padding:.5rem .75rem;border-bottom:3px solid transparent;margin-bottom:-1px;
+  }
+  .tab.active{color:var(--ink);border-bottom-color:var(--flare);}
+  .tab .count{font-family:var(--mono);font-size:.68rem;color:var(--flare);margin-left:.3rem;}
+
+  h2.sec{font-family:var(--disp);font-weight:700;font-size:1.05rem;margin:1.75rem 0 .6rem;}
+  .empty{
+    border:1px dashed var(--line);border-radius:8px;padding:1.5rem;text-align:center;
+    color:var(--ink-faint);font-size:.92rem;background:var(--panel);
+  }
+
+  .ticket{background:var(--panel);border:1px solid var(--line);border-radius:8px;margin:0 0 1rem;overflow:hidden;box-shadow:0 1px 3px rgba(21,34,43,.06);}
+  .ticket.hot{border-color:var(--flare);}
+  .ticket.dead{border-color:var(--crit);}
+  .thead{
+    display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap;
+    background:var(--panel-2);border-bottom:1px solid var(--line);padding:.55rem .9rem;
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;
+  }
+  .thead .id{font-weight:600;}
+  .thead .from{color:var(--ink-faint);}
+  .tbody{padding:.9rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem 1.1rem;}
+  .field .lab{font-family:var(--mono);font-size:.6rem;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-faint);display:block;}
+  .field .val{font-weight:700;font-size:.9rem;}
+  .field .val.hot{color:var(--flare);}
+  .field .val.cold{color:var(--freeze);}
+  .tfoot{border-top:1px dashed var(--line);padding:.6rem .9rem;display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;font-size:.85rem;}
+
+  .rail{display:flex;align-items:center;flex-wrap:wrap;font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;font-weight:600;padding:.6rem .9rem 0;}
+  .rail .st{padding:.28rem .55rem;border:1px solid var(--line);background:var(--panel);color:var(--ink-faint);white-space:nowrap;}
+  .rail .st:first-child{border-radius:4px 0 0 4px;}
+  .rail .st:last-child{border-radius:0 4px 4px 0;}
+  .rail .st.on{background:var(--freeze-soft);border-color:var(--freeze);color:var(--freeze);}
+  .rail .st.now{background:var(--flare-soft);border-color:var(--flare);color:var(--flare);}
+  .rail .st.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);}
+  .rail .st.crit{background:var(--crit-soft);border-color:var(--crit);color:var(--crit);}
+  .rail .arrow{color:var(--ink-faint);padding:0 .3rem;}
+  @media (prefers-reduced-motion: no-preference){
+    .rail .st.now{animation:pulse 2.4s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,93,15,0);}50%{box-shadow:0 0 0 4px rgba(232,93,15,.14);}}
+  }
+
+  .chip{font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.06em;padding:.15rem .45rem;border-radius:3px;white-space:nowrap;display:inline-block;}
+  .chip.ok{background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok);}
+  .chip.no{background:var(--panel-2);color:var(--ink-faint);border:1px solid var(--line);}
+  .chip.warn{background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn);}
+  .chip.crit{background:var(--crit-soft);color:var(--crit);border:1px solid var(--crit);}
+  .chip.info{background:var(--freeze-soft);color:var(--freeze);border:1px solid var(--freeze);}
+
+  .matches{border-top:1px dashed var(--line);padding:.7rem .9rem;}
+  .matches h4{font-family:var(--mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin:.1rem 0 .5rem;font-weight:600;}
+  .mrow{display:flex;gap:.6rem;align-items:baseline;font-size:.83rem;padding:.18rem 0;flex-wrap:wrap;}
+  .mrow .nm{font-weight:700;min-width:14rem;}
+  .mrow .why{color:var(--ink-faint);font-size:.78rem;}
+
+  .suggest{background:var(--freeze-soft);border:1px solid var(--freeze);border-radius:5px;padding:.5rem .75rem;font-size:.85rem;margin:.5rem .9rem;}
+  .suggest .tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--freeze);font-weight:600;margin-right:.5rem;}
+
+  .escalate{background:var(--crit-soft);border-top:1px solid var(--crit);padding:.8rem .9rem;font-size:.88rem;}
+  .escalate b{color:var(--crit);}
+  .escalate ul{margin:.4rem 0 0;padding-left:1.2rem;}
+
+  /* form + modal */
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:1rem 1.1rem;margin-bottom:1rem;}
+  .panel h3{font-family:var(--disp);font-weight:700;margin:.1rem 0 .75rem;font-size:1rem;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem 1rem;}
+  .f label{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:.2rem;}
+  .f select,.f input{
+    width:100%;box-sizing:border-box;font-family:var(--body);font-size:.9rem;color:var(--ink);
+    background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:.45rem .5rem;
+  }
+  .form-actions{display:flex;gap:.6rem;margin-top:1rem;align-items:center;flex-wrap:wrap;}
+  .hint{font-size:.8rem;color:var(--ink-faint);}
+
+  .overlay{position:fixed;inset:0;background:rgba(12,21,27,.55);display:flex;align-items:center;justify-content:center;z-index:100;padding:1rem;}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:10px;max-width:26rem;width:100%;padding:1.25rem;box-shadow:0 12px 40px rgba(0,0,0,.25);}
+  .modal h3{font-family:var(--disp);font-weight:700;margin:.1rem 0 .6rem;}
+  .modal .profrow{display:flex;justify-content:space-between;font-size:.88rem;padding:.25rem 0;border-bottom:1px dashed var(--line);}
+  .modal .profrow:last-of-type{border-bottom:0;}
+  .radio-row{display:flex;flex-direction:column;gap:.45rem;margin:.7rem 0;}
+  .radio-row label{display:flex;gap:.5rem;align-items:baseline;font-size:.9rem;cursor:pointer;}
+
+  /* network tab */
+  .orgcard{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:.8rem 1rem;margin-bottom:.6rem;}
+  .orgcard .top{display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap;align-items:baseline;}
+  .orgcard .nm{font-family:var(--disp);font-weight:700;}
+  .orgcard .meta{font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);margin-top:.3rem;display:flex;gap:1rem;flex-wrap:wrap;}
+  .stale-ok{color:var(--ok);} .stale-warn{color:var(--warn);} .stale-crit{color:var(--crit);}
+
+  footer{max-width:64rem;margin:0 auto;padding:0 1.25rem 3rem;font-size:.8rem;color:var(--ink-faint);}
+  footer .links{margin-top:.4rem;}
+</style>
+
+<div class="demo-banner">DEMO — EVERY ORGANIZATION, NUMBER, AND FLARE ON THIS SCREEN IS SYNTHETIC. NOTHING HERE IS LIVE AVAILABILITY.</div>
+<header class="bar">
+  <span class="wordmark">Ham Radio<span class="spark">.</span></span>
+  <div class="clockbox" aria-label="Demo clock">
+    <span class="viewing">Demo&nbsp;clock</span>
+    <span class="t" id="clock"></span>
+    <button class="btn small" id="adv15">+15m</button>
+    <button class="btn small" id="adv60">+1h</button>
+  </div>
+  <div class="spacer"></div>
+  <span class="viewing">Viewing&nbsp;as</span>
+  <select class="persona" id="persona" aria-label="Switch persona"></select>
+  <button class="btn ghost small" id="reset">Reset demo</button>
+</header>
+
+<main>
+  <div class="tabs" role="tablist">
+    <button class="tab active" id="tab-board" role="tab">Board</button>
+    <button class="tab" id="tab-network" role="tab">Network</button>
+  </div>
+  <div id="view"></div>
+</main>
+
+<footer>
+  <div>Ham Radio · Claude Impact Lab, Birmingham AI. Org-to-org only — no client data. Humans confirm both ends of every transfer; the filter gates physical compatibility only and never scores need.</div>
+  <div class="links">Verified links (real): <a href="https://www.211connectsalabama.org" target="_blank" rel="noopener">211 Connects Alabama</a> · <a href="https://feedingal.org" target="_blank" rel="noopener">Community Food Bank of Central Alabama</a> · <a href="https://gracekleincommunity.com" target="_blank" rel="noopener">Grace Klein / FeedBHM volunteer drivers</a></div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- synthetic network (obviously fictional names) ---------- */
+var CATS = ["dairy","produce","meat","prepared","dry goods","canned"];
+var ORGS = [
+  {id:"ray",  name:"Fauxfield Church Pantry",   who:"Ray — volunteer coordinator", x:0,   y:0,   radius:8,  storage:["dry","cold"],          hours:[8,18],  cats:CATS,                                          needs:["rice"],        confirmedDaysAgo:2},
+  {id:"mock", name:"Mock Creek Ministries",     who:"Deb — pantry lead",           x:2,   y:1,   radius:10, storage:["dry","cold","frozen"], hours:[9,17],  cats:["dairy","produce","meat","dry goods"],        needs:["rice"],        confirmedDaysAgo:3},
+  {id:"samp", name:"Sampletown Community Fridge",who:"Otis — fridge steward",      x:1.5, y:-1,  radius:5,  storage:["cold"],                hours:[7,21],  cats:["dairy","produce","prepared"],                needs:[],              confirmedDaysAgo:1},
+  {id:"demo", name:"Demo Heights Food Shelf",   who:"Gwen — shelf manager",        x:4,   y:3,   radius:6,  storage:["dry"],                 hours:[9,13],  cats:["dry goods","canned"],                        needs:["canned veg"],  confirmedDaysAgo:12},
+  {id:"plac", name:"Placebo Park Pantry",       who:"Hal — Saturday crew",         x:-3,  y:2,   radius:4,  storage:["dry","cold"],          hours:[10,16], cats:["produce","dry goods"],                       needs:[],              confirmedDaysAgo:5},
+  {id:"test", name:"Testerson Table",           who:"Marisol — director",          x:6,   y:-2,  radius:12, storage:["dry","cold","frozen"], hours:[9,17],  cats:CATS,                                          needs:["cooking oil"], confirmedDaysAgo:0},
+  {id:"notr", name:"Notreal North Pantry",      who:"Ed — part-time",              x:-7,  y:6,   radius:3,  storage:["dry"],                 hours:[9,12],  cats:["dry goods"],                                 needs:[],              confirmedDaysAgo:30},
+  {id:"synt", name:"Synthetic Springs Shelter", who:"Priya — kitchen lead",        x:3,   y:-4,  radius:4,  storage:["cold"],                hours:[15,20], cats:["prepared","dairy"],                          needs:[],              confirmedDaysAgo:4},
+  {id:"iron", name:"Imaginary Iron Fridge",     who:"Coach T — volunteer",         x:-1,  y:-2,  radius:6,  storage:["cold","frozen"],       hours:[6,22],  cats:["dairy","meat","prepared"],                   needs:["bread"],       confirmedDaysAgo:1},
+  {id:"pret", name:"Pretend Valley Co-op",      who:"June — buyer",                x:8,   y:8,   radius:15, storage:["dry","cold"],          hours:[9,17],  cats:["produce","dry goods"],                       needs:[],              confirmedDaysAgo:9},
+  {id:"blue", name:"Blueprint Baptist Pantry",  who:"Rev. Okafor",                 x:-2,  y:5,   radius:5,  storage:["dry"],                 hours:[8,11],  cats:["dry goods","canned"],                        needs:[],              confirmedDaysAgo:7},
+  {id:"stnd", name:"Stand-In Shepherd Kitchen", who:"Lena — chef",                 x:0.5, y:3,   radius:7,  storage:["cold"],                hours:[11,19], cats:["prepared","produce","dairy"],                needs:["eggs"],        confirmedDaysAgo:2}
+];
+var STORAGE_LABEL = {dry:"Dry", cold:"Refrigerated", frozen:"Frozen"};
+var DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+var HOLD_MIN = 30;
+var LS_KEY = "hamradio-demo-v1";
+
+/* ---------- state ---------- */
+var state = load() || freshState();
+
+function freshState(){
+  return {
+    clock: 9*60,               // demo-minutes since Monday 00:00
+    persona: "ray",
+    tab: "board",
+    seq: 47,
+    flares: [],
+    confirmed: {},             // orgId -> demo-clock minutes when profile last confirmed
+    showForm: false
+  };
+}
+function load(){
+  try{
+    var raw = localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function save(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+}
+
+/* ---------- helpers ---------- */
+function org(id){
+  for(var i=0;i<ORGS.length;i++){ if(ORGS[i].id===id) return ORGS[i]; }
+  return null;
+}
+function dist(a,b){
+  var dx=a.x-b.x, dy=a.y-b.y;
+  return Math.sqrt(dx*dx+dy*dy);
+}
+function fmtClock(mins){
+  var day = DAYS[Math.min(6, Math.floor(mins/1440))];
+  var m = mins % 1440;
+  var h = Math.floor(m/60), mm = m%60;
+  var ap = h>=12 ? "PM" : "AM";
+  var h12 = h%12; if(h12===0) h12=12;
+  return day+" "+h12+":"+(mm<10?"0":"")+mm+" "+ap;
+}
+function fmtHour(h){
+  var ap = h>=12?"PM":"AM"; var h12=h%12; if(h12===0)h12=12;
+  return h12+" "+ap;
+}
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function lastConfirmedText(o){
+  // profile confirmations made in-demo override the seeded age
+  var seededMins = o.confirmedDaysAgo*1440;
+  var inDemo = state.confirmed[o.id];
+  var ageMins = (inDemo!==undefined) ? (state.clock - inDemo) : (seededMins + (state.clock - 9*60));
+  var days = Math.floor(ageMins/1440);
+  var cls = days<=3 ? "stale-ok" : (days<=10 ? "stale-warn" : "stale-crit");
+  var txt = days<1 ? "today" : days+"d ago";
+  return {cls:cls, txt:"profile confirmed "+txt};
+}
+
+/* ---------- matching (physical-compatibility gate; never scores need) ---------- */
+function computeMatches(flare){
+  var poster = org(flare.posterId);
+  var results = [];
+  for(var i=0;i<ORGS.length;i++){
+    var o = ORGS[i];
+    if(o.id===flare.posterId) continue;
+    var reasons = [];
+    var d = dist(poster,o);
+    if(d > o.radius) reasons.push("too far ("+d.toFixed(1)+" mi, travels "+o.radius+")");
+    if(o.storage.indexOf(flare.storageReq)===-1) reasons.push("no "+STORAGE_LABEL[flare.storageReq].toLowerCase()+" storage");
+    if(!(o.hours[0] < flare.pickupEnd && o.hours[1] > flare.pickupStart)) reasons.push("closed during window (open "+fmtHour(o.hours[0])+"–"+fmtHour(o.hours[1])+")");
+    if(o.cats.indexOf(flare.category)===-1) reasons.push("not opted into "+flare.category);
+    results.push({orgId:o.id, ok:reasons.length===0, reasons:reasons, miles:d});
+  }
+  return results;
+}
+
+/* ---------- clock tick: expire holds, escalate dead flares ---------- */
+function tick(){
+  for(var i=0;i<state.flares.length;i++){
+    var f = state.flares[i];
+    if(f.status==="claimed" && state.clock >= f.claim.holdUntil){
+      f.status = "posted"; f.log.push({at:state.clock, msg:"Claim hold expired — reopened to all matched orgs"}); f.claim = null;
+    }
+    var windowEnd = f.postedDay*1440 + f.pickupEnd*60;
+    if((f.status==="posted") && state.clock >= windowEnd){
+      f.status = "escalated"; f.log.push({at:state.clock, msg:"Pickup window closed with no confirmed transfer — escalated"});
+    }
+  }
+}
+function advance(mins){
+  state.clock += mins;
+  tick(); save(); render();
+}
+
+/* ---------- actions ---------- */
+function postFlare(data){
+  state.seq++;
+  var f = {
+    id: state.seq,
+    posterId: state.persona,
+    category: data.category,
+    qty: data.qty,
+    storageReq: data.storageReq,
+    expiresHrs: data.expiresHrs,
+    pickupStart: data.pickupStart,
+    pickupEnd: data.pickupEnd,
+    nextDist: data.nextDist,
+    postedAt: state.clock,
+    postedDay: Math.floor(state.clock/1440),
+    status: "posted",
+    claim: null,
+    transport: null,
+    log: [{at:state.clock, msg:"Signal sent"}]
+  };
+  f.matches = computeMatches(f);
+  var n = f.matches.filter(function(m){return m.ok;}).length;
+  f.log.push({at:state.clock, msg:n+" of "+(ORGS.length-1)+" orgs notified simultaneously (physical-compatibility filter)"});
+  state.flares.unshift(f);
+  state.showForm = false;
+  save(); render();
+}
+function claimFlare(id, transport){
+  var f = getFlare(id); if(!f || f.status!=="posted") return;
+  f.status = "claimed";
+  f.claim = {orgId: state.persona, at: state.clock, holdUntil: state.clock + HOLD_MIN};
+  f.transport = transport;
+  state.confirmed[state.persona] = state.clock; // claiming confirms your profile
+  f.log.push({at:state.clock, msg:org(state.persona).name+" claimed — held "+HOLD_MIN+" min for poster confirmation. Transport: "+transport});
+  save(); render();
+}
+function confirmFlare(id){
+  var f = getFlare(id); if(!f || f.status!=="claimed") return;
+  f.status = "confirmed";
+  f.log.push({at:state.clock, msg:"Poster confirmed transfer — both humans said yes"});
+  save(); render();
+}
+function pickupFlare(id){
+  var f = getFlare(id); if(!f || f.status!=="confirmed") return;
+  f.status = "picked_up";
+  f.log.push({at:state.clock, msg:"Marked picked up"});
+  save(); render();
+}
+function getFlare(id){
+  for(var i=0;i<state.flares.length;i++){ if(state.flares[i].id===id) return state.flares[i]; }
+  return null;
+}
+
+/* ---------- rendering ---------- */
+var viewEl = document.getElementById("view");
+var modalData = null; // {flareId} while claim modal open
+
+function render(){
+  document.getElementById("clock").textContent = fmtClock(state.clock);
+  renderPersona();
+  document.getElementById("tab-board").classList.toggle("active", state.tab==="board");
+  document.getElementById("tab-network").classList.toggle("active", state.tab==="network");
+  viewEl.innerHTML = state.tab==="board" ? renderBoard() : renderNetwork();
+  wireBoard();
+  renderModal();
+}
+
+function renderPersona(){
+  var sel = document.getElementById("persona");
+  sel.innerHTML = ORGS.map(function(o){
+    return '<option value="'+o.id+'"'+(o.id===state.persona?" selected":"")+'>'+esc(o.name)+'</option>';
+  }).join("");
+}
+
+function statusRail(f){
+  var steps;
+  if(f.status==="escalated"){
+    steps = [
+      {t:"POSTED", cls:"on"},
+      {t:"NO TAKERS", cls:"crit"},
+      {t:"ESCALATED · CFBCA DESK", cls:"crit"}
+    ];
+  } else {
+    var order = ["posted","claimed","confirmed","picked_up"];
+    var labels = {posted:"POSTED", claimed:"CLAIMED · HOLD", confirmed:"CONFIRMED", picked_up:"PICKED UP"};
+    var idx = order.indexOf(f.status);
+    steps = order.map(function(s,i){
+      var cls = i<idx ? "on" : (i===idx ? (s==="picked_up"?"done":"now") : "");
+      return {t:labels[s], cls:cls};
+    });
+  }
+  return '<div class="rail">'+steps.map(function(s,i){
+    return (i>0?'<span class="arrow">→</span>':'')+'<span class="st '+s.cls+'">'+s.t+'</span>';
+  }).join("")+'</div>';
+}
+
+function ticketHTML(f, mine){
+  var poster = org(f.posterId);
+  var nOk = f.matches.filter(function(m){return m.ok;}).length;
+  var holdLeft = (f.status==="claimed") ? Math.max(0, f.claim.holdUntil - state.clock) : 0;
+  var html = '<div class="ticket'+(f.status==="claimed"?" hot":"")+(f.status==="escalated"?" dead":"")+'">';
+  html += '<div class="thead"><span class="id">SIGNAL #'+f.id+' · '+fmtClock(f.postedAt)+'</span><span class="from">'+(mine?"POSTED BY YOU":"FROM "+esc(poster.name.toUpperCase()))+'</span></div>';
+  html += statusRail(f);
+  html += '<div class="tbody">';
+  html += fld("Category", esc(f.category));
+  html += fld("Quantity", esc(f.qty)+" lbs");
+  html += fld("Storage req.", STORAGE_LABEL[f.storageReq], f.storageReq==="dry"?"":"cold");
+  html += fld("Expires", f.expiresHrs+" hrs", "hot");
+  html += fld("Next distribution", esc(f.nextDist));
+  html += fld("Pickup window", fmtHour(f.pickupStart)+"–"+fmtHour(f.pickupEnd)+" today");
+  html += fld("Matched &amp; notified", nOk+" of "+(ORGS.length-1)+" orgs");
+  if(f.transport) html += fld("Who moves it", esc(f.transport));
+  html += '</div>';
+
+  // contextual actions + panels
+  if(f.status==="posted" && !mine){
+    var myMatch = f.matches.filter(function(m){return m.orgId===state.persona;})[0];
+    if(myMatch && myMatch.ok){
+      html += '<div class="tfoot"><button class="btn primary" data-claim="'+f.id+'">Claim — holds '+HOLD_MIN+' min</button><span class="hint">Ignoring this costs you nothing; unclaimed signals escalate on their own.</span></div>';
+    }
+  }
+  if(f.status==="claimed"){
+    var claimer = org(f.claim.orgId);
+    if(mine){
+      html += '<div class="tfoot"><span><b>'+esc(claimer.name)+'</b> claimed · hold expires in <b>'+holdLeft+' min</b> (demo clock)</span>'+
+              '<button class="btn primary" data-confirm="'+f.id+'">Confirm transfer</button></div>';
+      if(claimer.needs.length){
+        html += '<div class="suggest"><span class="tag">SUGGESTION</span>'+esc(claimer.name)+' has a standing need for <b>'+esc(claimer.needs[0])+'</b> — send some along on the trip?</div>';
+      }
+    } else if(f.claim.orgId===state.persona){
+      html += '<div class="tfoot"><span>You claimed this. Waiting on <b>'+esc(poster.name)+'</b> to confirm · hold expires in <b>'+holdLeft+' min</b>.</span></div>';
+    }
+  }
+  if(f.status==="confirmed" && (mine || (f.claim && f.claim.orgId===state.persona))){
+    html += '<div class="tfoot"><span>Transfer confirmed by both parties.</span><button class="btn" data-pickup="'+f.id+'">Mark picked up</button></div>';
+  }
+  if(f.status==="picked_up"){
+    html += '<div class="tfoot"><span class="chip ok">RESOLVED</span><span class="hint">This signal auto-expires from the board — nothing persists as availability data.</span></div>';
+  }
+  if(f.status==="escalated"){
+    html += '<div class="escalate"><b>Nobody could take this in time.</b> A dead signal is loud, never silent — it goes to a human desk with verified links:'+
+      '<ul><li>CFBCA agency-relations desk — <a href="https://feedingal.org" target="_blank" rel="noopener">feedingal.org</a> (verified)</li>'+
+      '<li>Dial 211 or <a href="https://www.211connectsalabama.org" target="_blank" rel="noopener">211connectsalabama.org</a> (verified)</li>'+
+      '<li>Volunteer drivers — <a href="https://gracekleincommunity.com" target="_blank" rel="noopener">Grace Klein / FeedBHM</a> (verified)</li></ul></div>';
+  }
+
+  // match transparency (poster only)
+  if(mine && f.status!=="picked_up"){
+    html += '<div class="matches"><h4>Who was notified — and why others were not</h4>';
+    f.matches.forEach(function(m){
+      var o = org(m.orgId);
+      html += '<div class="mrow"><span class="nm">'+esc(o.name)+'</span>'+
+        (m.ok ? '<span class="chip ok">NOTIFIED · '+m.miles.toFixed(1)+' MI</span>'
+              : '<span class="chip no">NOT PINGED</span><span class="why">'+esc(m.reasons.join(" · "))+'</span>')+
+        '</div>';
+    });
+    html += '<p class="hint" style="margin:.5rem 0 0">All compatible orgs were notified at the same moment. The filter checks physical compatibility only — storage, distance, hours, category opt-in. It never scores need.</p></div>';
+  }
+  html += '</div>';
+  return html;
+}
+function fld(lab,val,cls){
+  return '<div class="field"><span class="lab">'+lab+'</span><span class="val '+(cls||"")+'">'+val+'</span></div>';
+}
+
+function renderBoard(){
+  var me = state.persona;
+  var mine = state.flares.filter(function(f){return f.posterId===me;});
+  var incoming = state.flares.filter(function(f){
+    if(f.posterId===me) return false;
+    var m = f.matches.filter(function(x){return x.orgId===me;})[0];
+    var involved = f.claim && f.claim.orgId===me;
+    return (m && m.ok && f.status!=="picked_up" && f.status!=="escalated") || involved;
+  });
+  var html = "";
+
+  if(state.showForm){ html += renderForm(); }
+  else{ html += '<div style="margin-bottom:1rem"><button class="btn primary" id="open-form">+ Put out a signal</button> <span class="hint">~60 seconds. Only physically compatible orgs get pinged.</span></div>'; }
+
+  html += '<h2 class="sec">Incoming — matched to you ('+incoming.length+')</h2>';
+  html += incoming.length ? incoming.map(function(f){return ticketHTML(f,false);}).join("")
+        : '<div class="empty">No incoming signals match your profile right now. You are only ever pinged about food you can physically store, near you, during hours you are open.</div>';
+
+  html += '<h2 class="sec">Your signals ('+mine.length+')</h2>';
+  html += mine.length ? mine.map(function(f){return ticketHTML(f,true);}).join("")
+        : '<div class="empty">Nothing posted. When inventory outruns your distribution schedule, put out a signal instead of working the phone tree.</div>';
+  return html;
+}
+
+function renderForm(){
+  var hours = [];
+  for(var h=7;h<=20;h++){ hours.push(h); }
+  function hourOpts(sel){
+    return hours.map(function(h){return '<option value="'+h+'"'+(h===sel?" selected":"")+'>'+fmtHour(h)+'</option>';}).join("");
+  }
+  return '<div class="panel"><h3>Put out a signal — as '+esc(org(state.persona).name)+'</h3>'+
+  '<div class="grid">'+
+    '<div class="f"><label>Category</label><select id="ff-cat">'+CATS.map(function(c){return '<option'+(c==="dairy"?" selected":"")+'>'+c+'</option>';}).join("")+'</select></div>'+
+    '<div class="f"><label>Quantity (lbs)</label><input id="ff-qty" type="number" value="120" min="1"></div>'+
+    '<div class="f"><label>Storage requirement</label><select id="ff-sto"><option value="dry">Dry</option><option value="cold" selected>Refrigerated</option><option value="frozen">Frozen</option></select></div>'+
+    '<div class="f"><label>Expires within</label><select id="ff-exp"><option value="24">24 hrs</option><option value="48">48 hrs</option><option value="72" selected>72 hrs</option></select></div>'+
+    '<div class="f"><label>Pickup window (today)</label><div style="display:flex;gap:.4rem"><select id="ff-ps">'+hourOpts(13)+'</select><select id="ff-pe">'+hourOpts(18)+'</select></div></div>'+
+    '<div class="f"><label>Next distribution</label><input id="ff-nd" type="text" value="Wed 10 AM — can&#39;t absorb this"></div>'+
+  '</div>'+
+  '<div class="form-actions"><button class="btn primary" id="submit-flare">Send the signal</button><button class="btn ghost" id="cancel-flare">Cancel</button>'+
+  '<span class="hint">The next-distribution field is the point: this food can&#39;t wait for your own line.</span></div></div>';
+}
+
+function renderNetwork(){
+  var poster = org(state.persona);
+  var html = '<p class="hint" style="margin:0 0 1rem">Twelve synthetic partner orgs. Profiles are self-maintained by the org that benefits — a stale profile means you stop receiving free food. Claiming a signal re-confirms your profile automatically.</p>';
+  ORGS.forEach(function(o){
+    var lc = lastConfirmedText(o);
+    var d = dist(poster,o);
+    html += '<div class="orgcard"><div class="top"><span class="nm">'+esc(o.name)+(o.id===state.persona?' <span class="chip info">YOU</span>':'')+'</span>'+
+      '<span class="chip '+(lc.cls==="stale-ok"?"ok":(lc.cls==="stale-warn"?"warn":"crit"))+'">'+lc.txt.toUpperCase()+'</span></div>'+
+      '<div class="meta"><span>'+esc(o.who)+'</span><span>'+o.storage.map(function(s){return STORAGE_LABEL[s];}).join(" · ")+'</span>'+
+      '<span>open '+fmtHour(o.hours[0])+'–'+fmtHour(o.hours[1])+'</span><span>travels '+o.radius+' mi</span>'+
+      (o.id!==state.persona?'<span>'+d.toFixed(1)+' mi from you</span>':'')+
+      (o.needs.length?'<span>standing need: '+esc(o.needs.join(", "))+'</span>':'')+
+      '</div></div>';
+  });
+  return html;
+}
+
+/* ---------- claim modal (profile confirm + transport) ---------- */
+function renderModal(){
+  var existing = document.getElementById("modal-root");
+  if(existing) existing.remove();
+  if(!modalData) return;
+  var o = org(state.persona);
+  var root = document.createElement("div");
+  root.id = "modal-root";
+  root.innerHTML = '<div class="overlay"><div class="modal" role="dialog" aria-label="Confirm profile and claim">'+
+    '<h3>Quick check before you claim</h3>'+
+    '<p class="hint" style="margin-top:0">Claiming re-confirms your profile — that&#39;s how the network stays fresh without anyone maintaining a directory.</p>'+
+    '<div class="profrow"><span>Storage</span><b>'+o.storage.map(function(s){return STORAGE_LABEL[s];}).join(" · ")+'</b></div>'+
+    '<div class="profrow"><span>Open today</span><b>'+fmtHour(o.hours[0])+'–'+fmtHour(o.hours[1])+'</b></div>'+
+    '<div class="profrow"><span>Will travel</span><b>'+o.radius+' mi</b></div>'+
+    '<div class="radio-row"><span class="f"><label>Who moves it?</label></span>'+
+      '<label><input type="radio" name="transport" value="We pick it up" checked> We&#39;ll pick it up</label>'+
+      '<label><input type="radio" name="transport" value="Poster drops off"> Ask poster to drop off</label>'+
+      '<label><input type="radio" name="transport" value="Volunteer driver (FeedBHM)"> Need a volunteer driver → <a href="https://gracekleincommunity.com" target="_blank" rel="noopener">FeedBHM</a></label>'+
+    '</div>'+
+    '<div class="form-actions"><button class="btn primary" id="modal-claim">Profile is right — claim it</button><button class="btn ghost" id="modal-cancel">Cancel</button></div>'+
+  '</div></div>';
+  document.body.appendChild(root);
+  document.getElementById("modal-claim").addEventListener("click", function(){
+    var t = root.querySelector('input[name="transport"]:checked').value;
+    var id = modalData.flareId;
+    modalData = null;
+    claimFlare(id, t);
+  });
+  document.getElementById("modal-cancel").addEventListener("click", function(){
+    modalData = null; renderModal();
+  });
+}
+
+/* ---------- wiring ---------- */
+function wireBoard(){
+  var open = document.getElementById("open-form");
+  if(open) open.addEventListener("click", function(){ state.showForm=true; save(); render(); });
+  var cancel = document.getElementById("cancel-flare");
+  if(cancel) cancel.addEventListener("click", function(){ state.showForm=false; save(); render(); });
+  var submit = document.getElementById("submit-flare");
+  if(submit) submit.addEventListener("click", function(){
+    var ps = parseInt(document.getElementById("ff-ps").value,10);
+    var pe = parseInt(document.getElementById("ff-pe").value,10);
+    if(pe<=ps){ pe = ps+1; }
+    postFlare({
+      category: document.getElementById("ff-cat").value,
+      qty: document.getElementById("ff-qty").value || "?",
+      storageReq: document.getElementById("ff-sto").value,
+      expiresHrs: document.getElementById("ff-exp").value,
+      pickupStart: ps, pickupEnd: pe,
+      nextDist: document.getElementById("ff-nd").value || "—"
+    });
+  });
+  viewEl.querySelectorAll("[data-claim]").forEach(function(b){
+    b.addEventListener("click", function(){ modalData = {flareId: parseInt(b.getAttribute("data-claim"),10)}; renderModal(); });
+  });
+  viewEl.querySelectorAll("[data-confirm]").forEach(function(b){
+    b.addEventListener("click", function(){ confirmFlare(parseInt(b.getAttribute("data-confirm"),10)); });
+  });
+  viewEl.querySelectorAll("[data-pickup]").forEach(function(b){
+    b.addEventListener("click", function(){ pickupFlare(parseInt(b.getAttribute("data-pickup"),10)); });
+  });
+}
+
+document.getElementById("persona").addEventListener("change", function(e){
+  state.persona = e.target.value; state.showForm=false; save(); render();
+});
+document.getElementById("adv15").addEventListener("click", function(){ advance(15); });
+document.getElementById("adv60").addEventListener("click", function(){ advance(60); });
+document.getElementById("reset").addEventListener("click", function(){
+  state = freshState(); save(); render();
+});
+document.getElementById("tab-board").addEventListener("click", function(){ state.tab="board"; save(); render(); });
+document.getElementById("tab-network").addEventListener("click", function(){ state.tab="network"; save(); render(); });
+
+render();
+})();
+</script>
