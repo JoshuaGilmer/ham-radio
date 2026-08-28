@@ -19,6 +19,17 @@ import type { OutboxEntry } from "./types";
 const DEFAULT_RELAY = "https://ham-radio-relay.vercel.app/api/send";
 const PREFS_KEY = "hamradio-comms-prefs-v1";
 
+/** Forgiving phone entry → E.164. "205-306-5895", "(205) 306 5895", "12053065895" all → +12053065895. */
+export function normalizePhone(raw: string): string {
+  const trimmed = raw.trim();
+  const digits = trimmed.replace(/\D/g, "");
+  if (trimmed.startsWith("+")) return "+" + digits;
+  if (digits.length === 10) return "+1" + digits;
+  if (digits.length === 11 && digits.startsWith("1")) return "+" + digits;
+  return digits ? "+" + digits : "";
+}
+const isE164 = (p: string) => /^\+\d{11,15}$/.test(p);
+
 // Presenter convenience: provider/phone/relay persist per-browser so the demo
 // opens prefilled after a rehearsal. The token is deliberately NOT persisted —
 // it stays in memory only and is re-pasted each session.
@@ -68,18 +79,20 @@ export function CommsPanel({ signals }: { signals: Signal[] }) {
   const target = signalId === "latest" ? signals[0] : signals.find((s) => String(s.id) === signalId);
   const body = useMemo(() => (target ? composeSignalSms(target) : ""), [target]);
 
+  const normalizedPhone = normalizePhone(phone);
+  const phoneOk = isE164(normalizedPhone);
   const ready =
     !!target &&
     consent &&
     (provider.id === "simulated" ||
-      (!!phone.trim() && (!provider.needsKey || !!key.trim()) && (!provider.needsEndpoint || !!endpoint.trim())));
+      (phoneOk && (!provider.needsKey || !!key.trim()) && (!provider.needsEndpoint || !!endpoint.trim())));
 
   const doSend = async () => {
     if (!ready || !target) return;
     setSending(true);
-    const result = await provider.send({ to: phone.trim(), body, key: key.trim(), endpoint: endpoint.trim() || undefined });
+    const result = await provider.send({ to: normalizedPhone, body, key: key.trim(), endpoint: endpoint.trim() || undefined });
     setOutbox((o) => [
-      { atWallClock: new Date().toLocaleTimeString(), provider: provider.label, to: provider.id === "simulated" ? "(on-screen)" : phone.trim(), body, result },
+      { atWallClock: new Date().toLocaleTimeString(), provider: provider.label, to: provider.id === "simulated" ? "(on-screen)" : normalizedPhone, body, result },
       ...o,
     ]);
     setSending(false);
@@ -130,7 +143,11 @@ export function CommsPanel({ signals }: { signals: Signal[] }) {
             {provider.id !== "simulated" && (
               <div>
                 <Label className="mb-1.5 font-mono text-[9px] tracking-widest text-muted-foreground uppercase">Judge&apos;s phone</Label>
-                <Input placeholder="+12055551234" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                <Input placeholder="205-555-1234" value={phone} aria-invalid={!!phone.trim() && !phoneOk} onChange={(e) => setPhone(e.target.value)} />
+                {phone.trim() && !phoneOk && <p className="mt-1 text-xs text-crit">Enter a full number, e.g. 205-306-5895.</p>}
+                {phoneOk && normalizedPhone !== phone.trim() && (
+                  <p className="mt-1 text-xs text-muted-foreground">Will send to {normalizedPhone}</p>
+                )}
               </div>
             )}
             {provider.needsKey && (
