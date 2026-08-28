@@ -12,6 +12,7 @@ import {
   loadState,
   pickupSignal,
   postSignal,
+  saveState,
   type AppState,
   type SignalForm,
 } from "./engine";
@@ -101,11 +102,30 @@ describe("loadState migration", () => {
     };
   });
 
-  test("backfills profileOverrides on saved states from older builds", () => {
-    const old = { ...freshState() } as Record<string, unknown>;
-    delete old.profileOverrides;
+  test("round-trips the current state exactly", () => {
+    const s: AppState = { ...freshState(), seq: 99, persona: "mock" };
+    saveState(s);
+    expect(loadState()).toEqual(s);
+  });
+
+  test("discards unversioned saves from older builds and starts fresh", () => {
+    const old = { ...freshState(), seq: 99 } as Record<string, unknown>;
+    delete old.profileOverrides; // pre-overrides build
     store.set("hamradio-demo-v1", JSON.stringify(old));
-    expect(loadState().profileOverrides).toEqual({});
+    expect(loadState()).toEqual(freshState());
+  });
+
+  test("discards saves stamped with a different version", () => {
+    saveState({ ...freshState(), seq: 99 });
+    const raw = JSON.parse(store.get("hamradio-demo-v1")!) as Record<string, unknown>;
+    raw.v = -1;
+    store.set("hamradio-demo-v1", JSON.stringify(raw));
+    expect(loadState()).toEqual(freshState());
+  });
+
+  test("corrupt JSON falls back to a fresh state instead of wedging", () => {
+    store.set("hamradio-demo-v1", "{definitely not json");
+    expect(loadState()).toEqual(freshState());
   });
 });
 
